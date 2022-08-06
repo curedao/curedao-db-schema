@@ -1,0 +1,1 @@
+# curedao-db-schema
