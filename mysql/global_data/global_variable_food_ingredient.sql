@@ -2,8 +2,8 @@ create table global_variable_food_ingredient
 (
     id                                 int unsigned auto_increment
         primary key,
-    food_global_variable_id            int unsigned                        not null comment 'This is the id of the food or composite variable being tagged with an ingredient.',
-    ingredient_global_variable_id      int unsigned                        not null comment 'This is the id of the ingredient variable whose value is inferred based on the value of the food or composite variable.',
+    food_global_global_variable_id            int unsigned                        not null comment 'This is the id of the food or composite variable being tagged with an ingredient.',
+    ingredient_global_global_variable_id      int unsigned                        not null comment 'This is the id of the ingredient variable whose value is inferred based on the value of the food or composite variable.',
     number_of_data_points              int(10)                             null comment 'The number of data points used to estimate the mean ingredient concentration from testing.',
     standard_error                     float                               null comment 'Measure of variability of the
 mean value as a function of the number of data points.',
@@ -15,15 +15,15 @@ mean value as a function of the number of data points.',
     updated_at                         timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     deleted_at                         timestamp                           null,
     constraint UK_tag_tagged
-        unique (food_global_variable_id, ingredient_global_variable_id),
+        unique (food_global_global_variable_id, ingredient_global_global_variable_id),
     constraint common_tags_client_id_fk
         foreign key (client_id) references oauth_clients (id),
-    constraint common_tags_tag_variable_id_variables_id_fk
-        foreign key (ingredient_global_variable_id) references global_variables (id),
+    constraint common_tags_tag_global_variable_id_variables_id_fk
+        foreign key (ingredient_global_global_variable_id) references global_variables (id),
     constraint common_tags_tag_variable_unit_id_fk
         foreign key (ingredient_global_variable_unit_id) references units (id),
-    constraint common_tags_tagged_variable_id_variables_id_fk
-        foreign key (food_global_variable_id) references global_variables (id),
+    constraint common_tags_tagged_global_variable_id_variables_id_fk
+        foreign key (food_global_global_variable_id) references global_variables (id),
     constraint common_tags_tagged_variable_unit_id_fk
         foreign key (food_global_variable_unit_id) references units (id)
 )

@@ -2,8 +2,8 @@ create table user_variable_tags
 (
     id                      int unsigned auto_increment
         primary key,
-    tagged_variable_id      int unsigned                        not null comment 'This is the id of the variable being tagged with an ingredient or something.',
-    tag_variable_id         int unsigned                        not null comment 'This is the id of the ingredient variable whose value is determined based on the value of the tagged variable.',
+    tagged_global_variable_id      int unsigned                        not null comment 'This is the id of the variable being tagged with an ingredient or something.',
+    tag_global_variable_id         int unsigned                        not null comment 'This is the id of the ingredient variable whose value is determined based on the value of the tagged variable.',
     conversion_factor       double                              not null comment 'Number by which we multiply the tagged variable''s value to obtain the tag variable''s value',
     user_id                 bigint unsigned                     not null,
     created_at              timestamp default CURRENT_TIMESTAMP not null,
@@ -13,17 +13,17 @@ create table user_variable_tags
     tagged_user_variable_id int unsigned                        null,
     tag_user_variable_id    int unsigned                        null,
     constraint UK_user_tag_tagged
-        unique (tagged_variable_id, tag_variable_id, user_id),
+        unique (tagged_global_variable_id, tag_global_variable_id, user_id),
     constraint user_tags_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint user_tags_tag_user_variable_id_fk
         foreign key (tag_user_variable_id) references user_variables (id),
-    constraint user_tags_tag_variable_id_variables_id_fk
-        foreign key (tag_variable_id) references global_variables (id),
+    constraint user_tags_tag_global_variable_id_variables_id_fk
+        foreign key (tag_global_variable_id) references global_variables (id),
     constraint user_tags_tagged_user_variable_id_fk
         foreign key (tagged_user_variable_id) references user_variables (id),
-    constraint user_tags_tagged_variable_id_variables_id_fk
-        foreign key (tagged_variable_id) references global_variables (id),
+    constraint user_tags_tagged_global_variable_id_variables_id_fk
+        foreign key (tagged_global_variable_id) references global_variables (id),
     constraint user_tags_user_id_fk
         foreign key (user_id) references users (id)
 )
@@ -31,5 +31,5 @@ create table user_variable_tags
     charset = utf8;
 
 create index fk_conversionUnit
-    on user_variable_tags (tag_variable_id);
+    on user_variable_tags (tag_global_variable_id);
 

@@ -11,17 +11,17 @@ create table user_variable_clients
     updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     user_id                 bigint unsigned                     not null,
     user_variable_id        int(11) unsigned                    not null,
-    variable_id             int(11) unsigned                    not null comment 'Id of variable',
+    global_variable_id             int(11) unsigned                    not null comment 'Id of variable',
     constraint user
-        unique (user_id, variable_id, client_id),
+        unique (user_id, global_variable_id, client_id),
     constraint user_variable_clients_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint user_variable_clients_user_id_fk
         foreign key (user_id) references users (id),
     constraint user_variable_clients_user_variables_user_variable_id_fk
         foreign key (user_variable_id) references user_variables (id),
-    constraint user_variable_clients_variable_id_fk
-        foreign key (variable_id) references global_variables (id)
+    constraint user_variable_clients_gv_id_fk
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Information about variable data obtained from specific data sources for specific users.' charset = utf8;
 

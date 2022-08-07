@@ -3,8 +3,8 @@ create table user_study_results
     id                                                           int auto_increment
         primary key,
     user_id                                                      bigint unsigned                                                 not null,
-    predictor_variable_id                                            int unsigned                                                    not null,
-    outcome_variable_id                                           int unsigned                                                    not null,
+    predictor_global_variable_id                                            int unsigned                                                    not null,
+    outcome_global_variable_id                                           int unsigned                                                    not null,
     qm_score                                                     double                                                          null comment 'A number representative of the relative importance of the relationship based on the strength,
                     usefulness, and plausible causality.  The higher the number, the greater the perceived importance.
                     This value can be used for sorting relationships by importance.  ',
@@ -106,25 +106,25 @@ create table user_study_results
     relationship                                                 enum ('POSITIVE', 'NEGATIVE', 'NONE')                           not null comment 'If higher predictor values generally precede HIGHER outcome values, the relationship is considered POSITIVE.  If higher predictor values generally precede LOWER outcome values, the relationship is considered NEGATIVE. ',
     slug                                                         varchar(200)                                                    null comment 'The slug is the part of a URL that identifies a page in human-readable keywords.',
     constraint correlations_pk
-        unique (user_id, predictor_variable_id, outcome_variable_id),
+        unique (user_id, predictor_global_variable_id, outcome_global_variable_id),
     constraint correlations_slug_uindex
         unique (slug),
-    constraint correlations_user_id_predictor_variable_id_outcome_variable_id_uindex
-        unique (user_id, predictor_variable_id, outcome_variable_id),
+    constraint correlations_user_id_predictor_global_variable_id_outcome_gv_id_uindex
+        unique (user_id, predictor_global_variable_id, outcome_global_variable_id),
     constraint correlations_aggregate_correlations_id_fk
         foreign key (aggregate_correlation_id) references global_study_results (id),
     constraint correlations_predictor_unit_id_fk
         foreign key (predictor_unit_id) references units (id),
     constraint correlations_predictor_variable_category_id_fk
         foreign key (predictor_variable_category_id) references variable_categories (id),
-    constraint correlations_predictor_variable_id_fk
-        foreign key (predictor_variable_id) references global_variables (id),
+    constraint correlations_predictor_gv_id_fk
+        foreign key (predictor_global_variable_id) references global_variables (id),
     constraint correlations_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint correlations_outcome_variable_category_id_fk
         foreign key (outcome_variable_category_id) references variable_categories (id),
-    constraint correlations_outcome_variable_id_fk
-        foreign key (outcome_variable_id) references global_variables (id),
+    constraint correlations_outcome_gv_id_fk
+        foreign key (outcome_global_variable_id) references global_variables (id),
     constraint correlations_user_id_fk
         foreign key (user_id) references users (id),
     constraint correlations_user_variables_predictor_user_variable_id_fk
@@ -152,9 +152,9 @@ create index correlations_updated_at_index
 create index correlations_user_id_deleted_at_qm_score_index
     on user_study_results (user_id, deleted_at, qm_score);
 
-create index user_id_predictor_variable_id_deleted_at_qm_score_index
-    on user_study_results (user_id, predictor_variable_id, deleted_at, qm_score);
+create index user_id_predictor_global_variable_id_deleted_at_qm_score_index
+    on user_study_results (user_id, predictor_global_variable_id, deleted_at, qm_score);
 
-create index user_id_outcome_variable_id_deleted_at_qm_score_index
-    on user_study_results (user_id, outcome_variable_id, deleted_at, qm_score);
+create index user_id_outcome_global_variable_id_deleted_at_qm_score_index
+    on user_study_results (user_id, outcome_global_variable_id, deleted_at, qm_score);
 

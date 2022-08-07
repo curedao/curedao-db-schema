@@ -18,11 +18,11 @@ mean value as a function of the number of data points.',
         unique (food_user_variable_id, ingredient_user_variable_id),
     constraint user_variable_child_parent_client_id_fk
         foreign key (client_id) references oauth_clients (id),
-    constraint user_variable_food_variable_id_variables_id_fk
+    constraint user_variable_food_global_variable_id_variables_id_fk
         foreign key (food_user_variable_id) references user_variables (id),
     constraint user_variable_food_variable_unit_id_fk
         foreign key (food_user_variable_unit_id) references units (id),
-    constraint user_variable_ingredient_variable_id_variables_id_fk
+    constraint user_variable_ingredient_global_variable_id_variables_id_fk
         foreign key (ingredient_user_variable_id) references user_variables (id),
     constraint user_variable_ingredient_variable_unit_id_fk
         foreign key (ingredient_user_variable_unit_id) references units (id)
@@ -34,7 +34,7 @@ ingredients by just entering the foods. The inferred intake levels will then be 
 create index user_variable_food_ingredient_client_id_fk
     on user_variable_food_ingredient (client_id);
 
-create index user_variable_food_ingredient_tag_variable_id_variables_id_fk
+create index user_variable_food_ingredient_tag_global_variable_id_variables_id_fk
     on user_variable_food_ingredient (ingredient_user_variable_id);
 
 create index user_variable_food_ingredient_tag_variable_unit_id_fk

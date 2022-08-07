@@ -5,11 +5,11 @@ create table clinical_trial_conditions
     nct_id        varchar(4369) null,
     name          varchar(4369) null,
     downcase_name varchar(4369) null,
-    variable_id   int unsigned  null,
-    constraint ctg_conditions_variable_id_uindex
-        unique (variable_id),
+    global_variable_id   int unsigned  null,
+    constraint ctg_conditions_gv_id_uindex
+        unique (global_variable_id),
     constraint ctg_conditions_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Conditions from clinicaltrials.gov' charset = latin1;
 

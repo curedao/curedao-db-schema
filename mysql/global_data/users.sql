@@ -71,7 +71,7 @@ create table users
     last_correlation_at                                      timestamp                            null,
     last_email_at                                            timestamp                            null,
     last_push_at                                             timestamp                            null,
-    primary_outcome_variable_id                              int unsigned                         null,
+    primary_outcome_global_variable_id                              int unsigned                         null,
     wp_post_id                                               bigint unsigned                      null,
     analysis_ended_at                                        timestamp                            null,
     analysis_requested_at                                    timestamp                            null,
@@ -277,7 +277,7 @@ create table users
     constraint users_slug_uindex
         unique (slug),
     constraint users_variables_id_fk
-        foreign key (primary_outcome_variable_id) references global_variables (id),
+        foreign key (primary_outcome_global_variable_id) references global_variables (id),
     constraint users_users_id_fk
         foreign key (referrer_user_id) references users (id)
 )

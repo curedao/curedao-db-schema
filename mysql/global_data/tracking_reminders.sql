@@ -4,7 +4,7 @@ create table tracking_reminders
         primary key,
     user_id                                         bigint unsigned                     not null,
     client_id                                       varchar(80)                         not null,
-    variable_id                                     int unsigned                        not null comment 'Id for the variable to be tracked',
+    global_variable_id                                     int unsigned                        not null comment 'Id for the variable to be tracked',
     default_value                                   double                              null comment 'Default value to use for the measurement when tracking',
     reminder_start_time                             time      default '00:00:00'        not null comment 'UTC time of
 day at which reminder notifications should appear in the case of daily or less frequent reminders.  The earliest UTC time at which notifications should appear in the case of intra-day repeating reminders. ',
@@ -35,24 +35,24 @@ day at which reminder notifications should appear in the case of daily or less f
                         as grouped on tracking_reminders.id = grouped.tracking_reminder_id
                     set tracking_reminders.number_of_tracking_reminder_notifications = count(grouped.total)]',
     constraint UK_user_var_time_freq
-        unique (user_id, variable_id, reminder_start_time, reminder_frequency),
+        unique (user_id, global_variable_id, reminder_start_time, reminder_frequency),
     constraint tracking_reminders_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint tracking_reminders_user_id_fk
         foreign key (user_id) references users (id)
             on update cascade on delete cascade,
-    constraint tracking_reminders_user_variables_user_id_variable_id_fk
-        foreign key (user_id, variable_id) references user_variables (user_id, variable_id),
+    constraint tracking_reminders_user_variables_user_id_gv_id_fk
+        foreign key (user_id, global_variable_id) references user_variables (user_id, global_variable_id),
     constraint tracking_reminders_user_variables_user_variable_id_fk
         foreign key (user_variable_id) references user_variables (id)
             on update cascade on delete cascade,
     constraint tracking_reminders_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Manage what variables you want to track and when you want to be reminded.' charset = utf8;
 
-create index tracking_reminders_user_variables_variable_id_user_id_fk
-    on tracking_reminders (variable_id, user_id);
+create index tracking_reminders_user_variables_global_variable_id_user_id_fk
+    on tracking_reminders (global_variable_id, user_id);
 
 create index user_client
     on tracking_reminders (user_id, client_id);

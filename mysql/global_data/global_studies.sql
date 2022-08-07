@@ -3,8 +3,8 @@ create table global_studies
     id                            varchar(80)                           not null comment 'Study id which should match OAuth client id'
         primary key,
     type                          varchar(20)                           not null comment 'The type of study may be population, individual, or cohort study',
-    predictor_variable_id             int unsigned                          not null comment 'variable ID of the predictor variable for which the user desires correlations',
-    outcome_variable_id            int unsigned                          not null comment 'variable ID of the outcome variable for which the user desires correlations',
+    predictor_global_variable_id             int unsigned                          not null comment 'variable ID of the predictor variable for which the user desires correlations',
+    outcome_global_variable_id            int unsigned                          not null comment 'variable ID of the outcome variable for which the user desires correlations',
     user_id                       bigint unsigned                       not null,
     created_at                    timestamp   default CURRENT_TIMESTAMP not null,
     deleted_at                    timestamp                             null,
@@ -34,21 +34,21 @@ create table global_studies
     constraint studies_slug_uindex
         unique (slug),
     constraint user_predictor_outcome_type
-        unique (user_id, predictor_variable_id, outcome_variable_id, type),
-    constraint studies_predictor_variable_id_variables_id_fk
-        foreign key (predictor_variable_id) references global_variables (id),
+        unique (user_id, predictor_global_variable_id, outcome_global_variable_id, type),
+    constraint studies_predictor_global_variable_id_variables_id_fk
+        foreign key (predictor_global_variable_id) references global_variables (id),
     constraint studies_client_id_fk
         foreign key (client_id) references oauth_clients (id),
-    constraint studies_outcome_variable_id_variables_id_fk
-        foreign key (outcome_variable_id) references global_variables (id),
+    constraint studies_outcome_global_variable_id_variables_id_fk
+        foreign key (outcome_global_variable_id) references global_variables (id),
     constraint studies_user_id_fk
         foreign key (user_id) references users (id)
 )
     comment 'Stores Study Settings' charset = utf8;
 
-create index predictor_variable_id
-    on global_studies (predictor_variable_id);
+create index predictor_global_variable_id
+    on global_studies (predictor_global_variable_id);
 
-create index outcome_variable_id
-    on global_studies (outcome_variable_id);
+create index outcome_global_variable_id
+    on global_studies (outcome_global_variable_id);
 

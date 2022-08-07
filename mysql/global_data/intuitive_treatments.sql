@@ -3,7 +3,7 @@ create table intuitive_treatments
     id                     int auto_increment
         primary key,
     name                   varchar(100)                        not null,
-    variable_id            int unsigned                        not null,
+    global_variable_id            int unsigned                        not null,
     updated_at             timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     created_at             timestamp default CURRENT_TIMESTAMP not null,
     deleted_at             timestamp                           null,
@@ -12,7 +12,7 @@ create table intuitive_treatments
     constraint treName
         unique (name),
     constraint ct_treatments_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'User self-reported treatments' charset = utf8;
 

@@ -5,7 +5,7 @@ create table user_variables
     parent_id                                            int unsigned                             null comment 'ID of the parent variable if this variable has any parent',
     client_id                                            varchar(80)                              null,
     user_id                                              bigint unsigned                          not null,
-    variable_id                                          int unsigned                             not null comment 'ID of variable',
+    global_variable_id                                          int unsigned                             not null comment 'ID of variable',
     default_unit_id                                      smallint unsigned                        null comment 'ID of unit to use for this variable',
     minimum_allowed_value                                double                                   null comment 'Minimum reasonable value for this variable (uses default unit)',
     maximum_allowed_value                                double                                   null comment 'Maximum reasonable value for this variable (uses default unit)',
@@ -67,8 +67,8 @@ create table user_variables
     number_of_raw_measurements_with_tags_joins_children  int unsigned                             null,
     most_common_source_name                              varchar(255)                             null,
     optimal_value_message                                varchar(500)                             null,
-    best_predictor_variable_id                               int(10)                                  null,
-    best_outcome_variable_id                              int(10)                                  null,
+    best_predictor_global_variable_id                               int(10)                                  null,
+    best_outcome_global_variable_id                              int(10)                                  null,
     user_maximum_allowed_daily_value                     double                                   null,
     user_minimum_allowed_daily_value                     double                                   null,
     user_minimum_allowed_non_zero_value                  double                                   null,
@@ -143,7 +143,7 @@ create table user_variables
     slug                                                 varchar(200)                             null comment 'The slug is the part of a URL that identifies a page in human-readable keywords.',
     predictor                                            tinyint(1)                               null comment 'predictor is true if the variable is a factor that could influence an outcome of interest',
     constraint user_id
-        unique (user_id, variable_id),
+        unique (user_id, global_variable_id),
     constraint user_variables_slug_uindex
         unique (slug),
     constraint user_variables_client_id_fk
@@ -160,13 +160,13 @@ create table user_variables
     constraint user_variables_variable_category_id_fk
         foreign key (variable_category_id) references variable_categories (id),
     constraint user_variables_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Variable statistics, analysis settings, and overviews with data visualizations and likely outcomes or predictors based on data for a specific individual'
     charset = utf8;
 
 create index fk_variableSettings
-    on user_variables (variable_id);
+    on user_variables (global_variable_id);
 
 create index user_variables_analysis_started_at_index
     on user_variables (analysis_started_at);

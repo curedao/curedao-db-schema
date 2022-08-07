@@ -6,7 +6,7 @@ create table measurements
     client_id            varchar(80)                         not null comment 'ID of the client application that
 submitted the measurement on behalf of the user',
     connector_id         int unsigned                        null comment 'The id for the connector data source from which the measurement was obtained',
-    variable_id          int unsigned                        not null comment 'ID of the variable for which we are creating the measurement records',
+    global_variable_id          int unsigned                        not null comment 'ID of the variable for which we are creating the measurement records',
     start_time           int unsigned                        not null comment 'Start time for the measurement event in ISO 8601',
     value                double                              not null comment 'The value of the measurement after conversion to the default unit for that variable',
     unit_id              smallint unsigned                   not null comment 'The default unit for the variable',
@@ -30,7 +30,7 @@ submitted the measurement on behalf of the user',
     deletion_reason      varchar(280)                        null comment 'The reason the variable was deleted.',
     original_start_at    timestamp                           not null,
     constraint measurements_pk
-        unique (user_id, variable_id, start_time),
+        unique (user_id, global_variable_id, start_time),
     constraint measurements_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint measurements_connections_id_fk
@@ -50,7 +50,7 @@ submitted the measurement on behalf of the user',
     constraint measurements_variable_category_id_fk
         foreign key (variable_category_id) references variable_categories (id),
     constraint measurements_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten.'
     charset = utf8;
@@ -61,12 +61,12 @@ create index measurements_start_time_index
 create index measurements_user_id_variable_category_id_start_time_index
     on measurements (user_id, variable_category_id, start_time);
 
-create index measurements_user_variables_variable_id_user_id_fk
-    on measurements (variable_id, user_id);
+create index measurements_user_variables_global_variable_id_user_id_fk
+    on measurements (global_variable_id, user_id);
 
-create index measurements_variable_id_start_time_index
-    on measurements (variable_id, start_time);
+create index measurements_global_variable_id_start_time_index
+    on measurements (global_variable_id, start_time);
 
-create index measurements_variable_id_value_start_time_index
-    on measurements (variable_id, value, start_time);
+create index measurements_global_variable_id_value_start_time_index
+    on measurements (global_variable_id, value, start_time);
 

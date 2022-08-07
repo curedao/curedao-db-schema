@@ -3,7 +3,7 @@ create table user_variable_predictor_category
     id                                 int auto_increment
         primary key,
     user_variable_id                   int unsigned                        not null,
-    variable_id                        int unsigned                        not null,
+    global_variable_id                        int unsigned                        not null,
     variable_category_id               tinyint unsigned                    not null,
     number_of_predictor_user_variables int unsigned                        not null,
     created_at                         timestamp default CURRENT_TIMESTAMP not null,
@@ -16,7 +16,7 @@ create table user_variable_predictor_category
     constraint user_variable_predictor_category_variable_categories_id_fk
         foreign key (variable_category_id) references variable_categories (id),
     constraint user_variable_predictor_category_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     charset = latin1;
 

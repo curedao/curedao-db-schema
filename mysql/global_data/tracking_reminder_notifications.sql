@@ -10,7 +10,7 @@ create table tracking_reminder_notifications
     notified_at          timestamp                           null,
     received_at          timestamp                           null,
     client_id            varchar(255)                        null,
-    variable_id          int unsigned                        not null,
+    global_variable_id          int unsigned                        not null,
     notify_at            timestamp                           not null,
     user_variable_id     int unsigned                        not null,
     constraint notify_at_tracking_reminder_id_uindex
@@ -27,7 +27,7 @@ create table tracking_reminder_notifications
         foreign key (user_variable_id) references user_variables (id)
             on update cascade on delete cascade,
     constraint tracking_reminder_notifications_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
             on update cascade on delete cascade
 )
     charset = utf8;

@@ -6,11 +6,11 @@ create table clinical_trial_interventions
     intervention_type varchar(4369) null,
     name              varchar(4369) null,
     description       text          null,
-    variable_id       int unsigned  null,
-    constraint ctg_interventions_variable_id_uindex
-        unique (variable_id),
+    global_variable_id       int unsigned  null,
+    constraint ctg_interventions_gv_id_uindex
+        unique (global_variable_id),
     constraint ctg_interventions_variables_id_fk
-        foreign key (variable_id) references global_variables (id)
+        foreign key (global_variable_id) references global_variables (id)
 )
     comment 'Interventions from clinicaltrials.gov' charset = latin1;
 

@@ -57,8 +57,8 @@ create table global_variables
     most_common_source_name                             varchar(255)                                    null comment '[]',
     data_sources_count                                  text                                            null comment 'Array of connector or client measurement data source names as key with number of users as value',
     optimal_value_message                               varchar(500)                                    null comment '[]',
-    best_predictor_variable_id                              int unsigned                                    null comment '[Calculated] The strongest predictor variable for all users.',
-    best_outcome_variable_id                             int unsigned                                    null comment '[Calculated] The strongest outcome variable for all users.',
+    best_predictor_global_variable_id                              int unsigned                                    null comment '[Calculated] The strongest predictor variable for all users.',
+    best_outcome_global_variable_id                             int unsigned                                    null comment '[Calculated] The strongest outcome variable for all users.',
     common_maximum_allowed_daily_value                  double                                          null comment '[validation]',
     common_minimum_allowed_daily_value                  double                                          null comment '[validation]',
     common_minimum_allowed_non_zero_value               double                                          null comment '[validation]',
@@ -83,11 +83,11 @@ create table global_variables
     wp_post_id                                          bigint unsigned                                 null comment '[]',
     number_of_soft_deleted_measurements                 int                                             null comment 'Formula: update variables v
                 inner join (
-                    select measurements.variable_id, count(measurements.id) as number_of_soft_deleted_measurements
+                    select measurements.global_variable_id, count(measurements.id) as number_of_soft_deleted_measurements
                     from measurements
                     where measurements.deleted_at is not null
-                    group by measurements.variable_id
-                    ) m on v.id = m.variable_id
+                    group by measurements.global_variable_id
+                    ) m on v.id = m.global_variable_id
                 set v.number_of_soft_deleted_measurements = m.number_of_soft_deleted_measurements
             ',
     charts                                              json                                            null comment '[Calculated] Highcharts configuration',
@@ -98,11 +98,11 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, predictor_variable_id
+                            select count(id) as total, predictor_global_variable_id
                             from aggregate_correlations
-                            group by predictor_variable_id
+                            group by predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.predictor_variable_id
+                        as grouped on variables.id = grouped.predictor_global_variable_id
                     set variables.number_of_outcome_population_studies = count(grouped.total)
                 ]
                 ',
@@ -110,11 +110,11 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, outcome_variable_id
+                            select count(id) as total, outcome_global_variable_id
                             from aggregate_correlations
-                            group by outcome_variable_id
+                            group by outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.outcome_variable_id
+                        as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_predictor_population_studies = count(grouped.total)
                 ]
                 ',
@@ -122,22 +122,22 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, outcome_variable_id
+                            select count(id) as total, outcome_global_variable_id
                             from applications
-                            group by outcome_variable_id
+                            group by outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.outcome_variable_id
+                        as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_applications_where_outcome_variable = count(grouped.total)
                 ]',
     number_of_applications_where_predictor_variable     int unsigned                                    null comment 'Number of Applications for this Predictor Variable.
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, predictor_variable_id
+                            select count(id) as total, predictor_global_variable_id
                             from applications
-                            group by predictor_variable_id
+                            group by predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.predictor_variable_id
+                        as grouped on variables.id = grouped.predictor_global_variable_id
                     set variables.number_of_applications_where_predictor_variable = count(grouped.total)
                 ]
                 ',
@@ -145,11 +145,11 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, tag_variable_id
+                            select count(id) as total, tag_global_variable_id
                             from common_tags
-                            group by tag_variable_id
+                            group by tag_global_variable_id
                         )
-                        as grouped on variables.id = grouped.tag_variable_id
+                        as grouped on variables.id = grouped.tag_global_variable_id
                     set variables.number_of_common_tags_where_tag_variable = count(grouped.total)
                 ]
                 ',
@@ -157,11 +157,11 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, tagged_variable_id
+                            select count(id) as total, tagged_global_variable_id
                             from common_tags
-                            group by tagged_variable_id
+                            group by tagged_global_variable_id
                         )
-                        as grouped on variables.id = grouped.tagged_variable_id
+                        as grouped on variables.id = grouped.tagged_global_variable_id
                     set variables.number_of_common_tags_where_tagged_variable = count(grouped.total)
                 ]
                 ',
@@ -169,121 +169,121 @@ create table global_variables
                 [Formula:
                     update variables
                         left join (
-                            select count(id) as total, predictor_variable_id
+                            select count(id) as total, predictor_global_variable_id
                             from correlations
-                            group by predictor_variable_id
+                            group by predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.predictor_variable_id
+                        as grouped on variables.id = grouped.predictor_global_variable_id
                     set variables.number_of_outcome_case_studies = count(grouped.total)
                 ]
                 ',
     number_of_predictor_case_studies                    int unsigned                                    null comment 'Number of Individual Case Studies for this Effect Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, outcome_variable_id
+                            select count(id) as total, outcome_global_variable_id
                             from correlations
-                            group by outcome_variable_id
+                            group by outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.outcome_variable_id
+                        as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_predictor_case_studies = count(grouped.total)]',
     number_of_measurements                              int unsigned                                    null comment 'Number of Measurements for this Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, variable_id
+                            select count(id) as total, global_variable_id
                             from measurements
-                            group by variable_id
+                            group by global_variable_id
                         )
-                        as grouped on variables.id = grouped.variable_id
+                        as grouped on variables.id = grouped.global_variable_id
                     set variables.number_of_measurements = count(grouped.total)]',
     number_of_studies_where_predictor_variable              int unsigned                                    null comment 'Number of Studies for this predictor Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, predictor_variable_id
+                            select count(id) as total, predictor_global_variable_id
                             from studies
-                            group by predictor_variable_id
+                            group by predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.predictor_variable_id
+                        as grouped on variables.id = grouped.predictor_global_variable_id
                     set variables.number_of_studies_where_predictor_variable = count(grouped.total)]',
     number_of_studies_where_outcome_variable             int unsigned                                    null comment 'Number of Studies for this Effect Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, outcome_variable_id
+                            select count(id) as total, outcome_global_variable_id
                             from studies
-                            group by outcome_variable_id
+                            group by outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.outcome_variable_id
+                        as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_studies_where_outcome_variable = count(grouped.total)]',
     number_of_tracking_reminder_notifications           int unsigned                                    null comment 'Number of Tracking Reminder Notifications for this Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, variable_id
+                            select count(id) as total, global_variable_id
                             from tracking_reminder_notifications
-                            group by variable_id
+                            group by global_variable_id
                         )
-                        as grouped on variables.id = grouped.variable_id
+                        as grouped on variables.id = grouped.global_variable_id
                     set variables.number_of_tracking_reminder_notifications = count(grouped.total)]',
     number_of_user_tags_where_tag_variable              int unsigned                                    null comment 'Number of User Tags for this Tag Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, tag_variable_id
+                            select count(id) as total, tag_global_variable_id
                             from user_tags
-                            group by tag_variable_id
+                            group by tag_global_variable_id
                         )
-                        as grouped on variables.id = grouped.tag_variable_id
+                        as grouped on variables.id = grouped.tag_global_variable_id
                     set variables.number_of_user_tags_where_tag_variable = count(grouped.total)]',
     number_of_user_tags_where_tagged_variable           int unsigned                                    null comment 'Number of User Tags for this Tagged Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, tagged_variable_id
+                            select count(id) as total, tagged_global_variable_id
                             from user_tags
-                            group by tagged_variable_id
+                            group by tagged_global_variable_id
                         )
-                        as grouped on variables.id = grouped.tagged_variable_id
+                        as grouped on variables.id = grouped.tagged_global_variable_id
                     set variables.number_of_user_tags_where_tagged_variable = count(grouped.total)]',
     number_of_variables_where_best_predictor_variable       int unsigned                                    null comment 'Number of Variables for this Best predictor Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, best_predictor_variable_id
+                            select count(id) as total, best_predictor_global_variable_id
                             from variables
-                            group by best_predictor_variable_id
+                            group by best_predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.best_predictor_variable_id
+                        as grouped on variables.id = grouped.best_predictor_global_variable_id
                     set variables.number_of_variables_where_best_predictor_variable = count(grouped.total)]',
     number_of_variables_where_best_outcome_variable      int unsigned                                    null comment 'Number of Variables for this Best Effect Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, best_outcome_variable_id
+                            select count(id) as total, best_outcome_global_variable_id
                             from variables
-                            group by best_outcome_variable_id
+                            group by best_outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.best_outcome_variable_id
+                        as grouped on variables.id = grouped.best_outcome_global_variable_id
                     set variables.number_of_variables_where_best_outcome_variable = count(grouped.total)]',
     number_of_votes_where_predictor_variable                int unsigned                                    null comment 'Number of Votes for this predictor Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, predictor_variable_id
+                            select count(id) as total, predictor_global_variable_id
                             from votes
-                            group by predictor_variable_id
+                            group by predictor_global_variable_id
                         )
-                        as grouped on variables.id = grouped.predictor_variable_id
+                        as grouped on variables.id = grouped.predictor_global_variable_id
                     set variables.number_of_votes_where_predictor_variable = count(grouped.total)]',
     number_of_votes_where_outcome_variable               int unsigned                                    null comment 'Number of Votes for this Effect Variable.
                     [Formula: update variables
                         left join (
-                            select count(id) as total, outcome_variable_id
+                            select count(id) as total, outcome_global_variable_id
                             from votes
-                            group by outcome_variable_id
+                            group by outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.outcome_variable_id
+                        as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_votes_where_outcome_variable = count(grouped.total)]',
     number_of_users_where_primary_outcome_variable      int unsigned                                    null comment 'Number of Users for this Primary Outcome Variable.
                     [Formula: update variables
                         left join (
-                            select count(ID) as total, primary_outcome_variable_id
+                            select count(ID) as total, primary_outcome_global_variable_id
                             from users
-                            group by primary_outcome_variable_id
+                            group by primary_outcome_global_variable_id
                         )
-                        as grouped on variables.id = grouped.primary_outcome_variable_id
+                        as grouped on variables.id = grouped.primary_outcome_global_variable_id
                     set variables.number_of_users_where_primary_outcome_variable = count(grouped.total)]',
     deletion_reason                                     varchar(280)                                    null comment 'The reason the variable was deleted.',
     maximum_allowed_daily_value                         double                                          null comment 'The maximum allowed value in the default unit for measurements aggregated over a single day. ',
@@ -304,7 +304,7 @@ create table global_variables
     controllable                                        tinyint(1)                                      null comment 'You can control the foods you eat directly. However, symptom severity or weather is not directly controllable. ',
     boring                                              tinyint(1)                                      null comment '[Admin-Setting] The variable is boring if the average person would not be interested in its predictors or outcomes.',
     slug                                                varchar(200)                                    null comment 'The slug is an identifier in human-readable keywords, used as id for the exchange format and id in document database.',
-    canonical_variable_id                               int unsigned                                    null comment '[Admin-Setting] If a variable duplicates another but with a different name, set the canonical variable id to match the variable with the more appropriate name.  Then only the canonical variable will be displayed and all data for the duplicate variable will be included when fetching data for the canonical variable.',
+    canonical_global_variable_id                               int unsigned                                    null comment '[Admin-Setting] If a variable duplicates another but with a different name, set the canonical variable id to match the variable with the more appropriate name.  Then only the canonical variable will be displayed and all data for the duplicate variable will be included when fetching data for the canonical variable.',
     predictor                                           tinyint(1)                                      null comment 'predictor is true if the variable is a factor that could influence an outcome of interest',
     source_url                                          varchar(2083)                                   null comment '[admin,public-if-null] URL for the website related to the database containing the info that was used to create this variable such as https://world.openfoodfacts.org or https://dsld.od.nih.gov/dsld',
     loinc_core_id                                       int                                             null comment '[]',
@@ -331,11 +331,11 @@ create table global_variables
     constraint variables_aggregate_correlations_id_fk
         foreign key (best_aggregate_correlation_id) references global_study_results (id)
             on delete set null,
-    constraint variables_best_predictor_variable_id_fk
-        foreign key (best_predictor_variable_id) references global_variables (id)
+    constraint variables_best_predictor_gv_id_fk
+        foreign key (best_predictor_global_variable_id) references global_variables (id)
             on delete set null,
-    constraint variables_best_outcome_variable_id_fk
-        foreign key (best_outcome_variable_id) references global_variables (id)
+    constraint variables_best_outcome_gv_id_fk
+        foreign key (best_outcome_global_variable_id) references global_variables (id)
             on delete set null,
     constraint variables_client_id_fk
         foreign key (client_id) references oauth_clients (id),

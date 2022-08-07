@@ -51,8 +51,8 @@ create table global_study_results
     analysis_ended_at                                            timestamp                                                       null,
     user_error_message                                           text                                                            null,
     internal_error_message                                       text                                                            null,
-    predictor_variable_id                                            int unsigned                                                    not null,
-    outcome_variable_id                                           int unsigned                                                    not null,
+    predictor_global_variable_id                                            int unsigned                                                    not null,
+    outcome_global_variable_id                                           int unsigned                                                    not null,
     predictor_baseline_average_per_day                               float                                                           not null comment 'Predictor Average at Baseline (The average low non-treatment value of the predictor per day)',
     predictor_baseline_average_per_duration_of_action                float                                                           not null comment 'Predictor Average at Baseline (The average low non-treatment value of the predictor per duration of action)',
     predictor_treatment_average_per_day                              float                                                           not null comment 'Predictor Average During Treatment (The average high value of the predictor per day considered to be the treatment dosage)',
@@ -88,26 +88,26 @@ create table global_study_results
     relationship                                                 enum ('POSITIVE', 'NEGATIVE', 'NONE')                           not null comment 'If higher predictor values generally precede HIGHER outcome values, the relationship is considered POSITIVE.  If higher predictor values generally precede LOWER outcome values, the relationship is considered NEGATIVE. ',
     slug                                                         varchar(200)                                                    null comment 'The slug is the part of a URL that identifies a page in human-readable keywords.',
     constraint aggregate_correlations_pk
-        unique (predictor_variable_id, outcome_variable_id),
+        unique (predictor_global_variable_id, outcome_global_variable_id),
     constraint aggregate_correlations_slug_uindex
         unique (slug),
-    constraint predictor_variable_id_outcome_variable_id_uindex
-        unique (predictor_variable_id, outcome_variable_id),
+    constraint predictor_global_variable_id_outcome_gv_id_uindex
+        unique (predictor_global_variable_id, outcome_global_variable_id),
     constraint aggregate_correlations_predictor_unit_id_fk
         foreign key (predictor_unit_id) references units (id),
     constraint aggregate_correlations_predictor_variable_category_id_fk
         foreign key (predictor_variable_category_id) references variable_categories (id),
     constraint aggregate_correlations_predictor_variables_id_fk
-        foreign key (predictor_variable_id) references global_variables (id),
+        foreign key (predictor_global_variable_id) references global_variables (id),
     constraint aggregate_correlations_client_id_fk
         foreign key (client_id) references oauth_clients (id),
     constraint aggregate_correlations_outcome_variable_category_id_fk
         foreign key (outcome_variable_category_id) references variable_categories (id),
     constraint aggregate_correlations_outcome_variables_id_fk
-        foreign key (outcome_variable_id) references global_variables (id)
+        foreign key (outcome_global_variable_id) references global_variables (id)
 )
     comment 'Stores Calculated Aggregated Correlation Coefficients' charset = utf8;
 
-create index aggregate_correlations_outcome_variable_id_index
-    on global_study_results (outcome_variable_id);
+create index aggregate_correlations_outcome_global_variable_id_index
+    on global_study_results (outcome_global_variable_id);
 
