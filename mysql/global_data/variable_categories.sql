@@ -14,7 +14,7 @@ create table variable_categories
     image_url                                    tinytext                                        null comment 'Image URL',
     default_unit_id                              smallint unsigned    default 12                 null comment 'ID of the default unit for the category',
     deleted_at                                   timestamp                                       null,
-    is_manual_tracking                              tinyint(1)           default 0                  not null comment 'Should we include in manual tracking searches?',
+    is_is_manually_recorded                              tinyint(1)           default 0                  not null comment 'Should we include in manual tracking searches?',
     minimum_allowed_seconds_between_measurements int                                             null,
     average_seconds_between_measurements         int                                             null,
     median_seconds_between_measurements          int                                             null,
@@ -97,7 +97,7 @@ create table variable_categories
     is_public                                    tinyint(1)                                      null,
     synonyms                                     varchar(600)                                    not null comment 'The primary name and any synonyms for it. This field should be used for non-specific searches.',
     amazon_product_category                      varchar(100)                                    not null comment 'The Amazon equivalent product category.',
-    is_boring                                       tinyint(1)                                      null comment 'If boring, the category should be hidden by default.',
+    is_boring                                       tinyint(1)                                      null comment 'If is_boring, the category should be hidden by default.',
     is_outcome                                  tinyint(1)                                      null comment
         'True if people would never be interested in the outcomes of most variables in the category.',
     is_predictor                                    tinyint(1)                                      null comment

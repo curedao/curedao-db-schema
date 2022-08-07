@@ -138,7 +138,7 @@ create table user_variables
     is_public                                            tinyint(1)                               null,
     is_goal                                              tinyint(1)                               null comment 'The outcome of a food on the severity of a symptom is useful if you can control the predictor directly. However, the outcome of a symptom on the foods you eat is not very useful.  The foods you eat are not generally an objective end in themselves. ',
     controllable                                         tinyint(1)                               null comment 'You can control the foods you eat directly. However, symptom severity or weather is not directly controllable. ',
-    boring                                               tinyint(1)                               null comment 'The user variable is boring if the owner would not be interested in its predictors or outcomes. ',
+    is_boring                                               tinyint(1)                               null comment 'The user variable is is_boring if the owner would not be interested in its predictors or outcomes. ',
     slug                                                 varchar(200)                             null comment 'The slug is the part of a URL that identifies a page in human-readable keywords.',
     predictor                                            tinyint(1)                               null comment 'predictor is true if the variable is a factor that could influence an outcome of interest',
     constraint user_id

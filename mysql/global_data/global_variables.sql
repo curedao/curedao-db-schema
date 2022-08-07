@@ -67,7 +67,7 @@ create table global_variables
     median_seconds_between_measurements                 int                                             null comment '[]',
     number_of_raw_measurements_with_tags_joins_children int unsigned                                    null comment '[]',
     additional_meta_data                                text                                            null comment '[] JSON-encoded additional data that does not fit in any other columns. JSON object',
-    manual_tracking                                     tinyint(1)                                      null comment '[]',
+    is_manually_recorded                                     tinyint(1)                                      null comment '[]',
     analysis_settings_modified_at                       timestamp                                       null comment '[Internal] When last analysis settings we''re changed.',
     newest_data_at                                      timestamp                                       null comment '[]',
     analysis_requested_at                               timestamp                                       null comment '[Internal] When an analysis was manually triggered.',
@@ -115,29 +115,6 @@ create table global_variables
                         )
                         as grouped on variables.id = grouped.outcome_global_variable_id
                     set variables.number_of_predictor_global_studies = count(grouped.total)
-                ]
-                ',
-    number_of_applications_where_outcome_variable       int unsigned                                    null comment 'Number of Applications for this Outcome Variable.
-                [Formula:
-                    update variables
-                        left join (
-                            select count(id) as total, outcome_global_variable_id
-                            from applications
-                            group by outcome_global_variable_id
-                        )
-                        as grouped on variables.id = grouped.outcome_global_variable_id
-                    set variables.number_of_applications_where_outcome_variable = count(grouped.total)
-                ]',
-    number_of_applications_where_predictor_variable     int unsigned                                    null comment 'Number of Applications for this Predictor Variable.
-                [Formula:
-                    update variables
-                        left join (
-                            select count(id) as total, predictor_global_variable_id
-                            from applications
-                            group by predictor_global_variable_id
-                        )
-                        as grouped on variables.id = grouped.predictor_global_variable_id
-                    set variables.number_of_applications_where_predictor_variable = count(grouped.total)
                 ]
                 ',
     number_of_common_tags_where_tag_variable            int unsigned                                    null comment 'Number of Common Tags for this Tag Variable.
@@ -301,7 +278,7 @@ create table global_variables
     sort_order                                          int                                             not null comment '[]',
     is_goal                                             tinyint(1)                                      null comment 'The outcome of a food on the severity of a symptom is useful if you can control the predictor directly. However, the outcome of a symptom on the foods you eat is not very useful.  The foods you eat are not generally an objective end in themselves. ',
     controllable                                        tinyint(1)                                      null comment 'You can control the foods you eat directly. However, symptom severity or weather is not directly controllable. ',
-    boring                                              tinyint(1)                                      null comment '[Admin-Setting] The variable is boring if the average person would not be interested in its predictors or outcomes.',
+    is_boring                                              tinyint(1)                                      null comment '[Admin-Setting] The variable is is_boring if the average person would not be interested in its predictors or outcomes.',
     slug                                                varchar(200)                                    null comment 'The slug is an identifier in human-readable keywords, used as id for the exchange format and id in document database.',
     canonical_global_variable_id                               int unsigned                                    null comment '[Admin-Setting] If a variable duplicates another but with a different name, set the canonical variable id to match the variable with the more appropriate name.  Then only the canonical variable will be displayed and all data for the duplicate variable will be included when fetching data for the canonical variable.',
     predictor                                           tinyint(1)                                      null comment 'predictor is true if the variable is a factor that could influence an outcome of interest',
@@ -325,7 +302,7 @@ create table global_variables
         unique (name),
     constraint variables_slug_uindex
         unique (slug),
-    constraint qm_variables_loinc_core_id_fk
+    constraint global_variables_loinc_core_id_fk
         foreign key (loinc_core_id) references loinc_core (id),
     constraint variables_gv_relationships_id_fk
         foreign key (best_global_variable_relationship_id) references global_variable_relationships (id)

@@ -7,7 +7,7 @@ create table users
     email                                               varchar(100)                         null comment 'Email address of the user.',
     user_url                                                 varchar(2083)                        null comment 'URL of the user, e.g. website address.',
     display_name                                             varchar(250)                         null comment 'Desired name to be used publicly in the site, can be username, slug, first name or last name defined in user_meta.',
-    image                                             varchar(2083)                        null,
+    image_url                                             varchar(2083)                        null,
     updated_at                                               timestamp  default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     created_at                                               timestamp  default CURRENT_TIMESTAMP not null,
     time_zone_offset                                         int                                  null comment 'The time-zone offset is the difference, in minutes, between UTC and local time. Note that this means that the offset is positive if the local timezone is behind UTC (i.e. UTC−06:00 Central) and negative if it is ahead.',
@@ -16,8 +16,6 @@ create table users
     combine_notifications                                    tinyint(1) default 0                 null comment 'Should we combine push notifications or send one for each tracking reminder notification?',
     send_reminder_notification_emails                        tinyint(1) default 0                 null comment 'Should we send reminder notification emails?',
     send_predictor_emails                                    tinyint(1) default 1                 null comment 'Should we send predictor emails?',
-    get_preview_builds                                       tinyint(1) default 0                 null comment 'Should we send preview builds of the mobile application?',
-    subscription_provider                                    enum ('stripe', 'apple', 'google')   null,
     last_sms_tracking_reminder_notification_id               bigint unsigned                      null,
     sms_notifications_enabled                                tinyint(1) default 0                 null comment 'Should we send tracking reminder notifications via tex messages?',
     phone_verification_code                                  varchar(25)                          null,
@@ -40,7 +38,6 @@ create table users
     verified                                                 varchar(255)                         null,
     zip_code                                                 varchar(255)                         null,
     spam                                                     tinyint(2) default 0                 not null,
-    deleted                                                  tinyint(2) default 0                 not null,
     last_login_at                                            timestamp                            null,
     timezone                                                 varchar(255)                         null,
     number_of_relationships                                   int                                  null,
@@ -64,18 +61,6 @@ create table users
     user_error_message                                       text                                 null,
     status                                                   varchar(25)                          null,
     analysis_settings_modified_at                            timestamp                            null,
-    number_of_applications                                   int unsigned                         null comment 'Number of Applications for this User.
-                [Formula:
-                    update users
-                        left join (
-                            select count(id) as total, user_id
-                            from applications
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_applications = count(grouped.total)
-                ]
-                ',
     number_of_oauth_access_tokens                            int unsigned                         null comment 'Number of OAuth Access Tokens for this User.
                 [Formula:
                     update users
@@ -88,18 +73,6 @@ create table users
                     set users.number_of_oauth_access_tokens = count(grouped.total)
                 ]
                 ',
-    number_of_oauth_authorization_codes                      int unsigned                         null comment 'Number of OAuth Authorization Codes for this User.
-                [Formula:
-                    update users
-                        left join (
-                            select count(authorization_code) as total, user_id
-                            from oauth_authorization_codes
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_oauth_authorization_codes = count(grouped.total)
-                ]
-                ',
     number_of_oauth_clients                                  int unsigned                         null comment 'Number of OAuth Clients for this User.
                 [Formula:
                     update users
@@ -110,42 +83,6 @@ create table users
                         )
                         as grouped on users.id = grouped.user_id
                     set users.number_of_oauth_clients = count(grouped.total)
-                ]
-                ',
-    number_of_oauth_refresh_tokens                           int unsigned                         null comment 'Number of OAuth Refresh Tokens for this User.
-                [Formula:
-                    update users
-                        left join (
-                            select count(refresh_token) as total, user_id
-                            from oauth_refresh_tokens
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_oauth_refresh_tokens = count(grouped.total)
-                ]
-                ',
-    number_of_button_clicks                                  int unsigned                         null comment 'Number of Button Clicks for this User.
-                [Formula:
-                    update users
-                        left join (
-                            select count(id) as total, user_id
-                            from button_clicks
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_button_clicks = count(grouped.total)
-                ]
-                ',
-    number_of_collaborators                                  int unsigned                         null comment 'Number of Collaborators for this User.
-                [Formula:
-                    update users
-                        left join (
-                            select count(id) as total, user_id
-                            from collaborators
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_collaborators = count(grouped.total)
                 ]
                 ',
     number_of_connector_imports                              int unsigned                         null comment 'Number of Connector Imports for this User.
@@ -208,15 +145,6 @@ create table users
                         )
                         as grouped on users.id = grouped.user_id
                     set users.number_of_sent_emails = count(grouped.total)]',
-    number_of_subscriptions                                  int unsigned                         null comment 'Number of Subscriptions for this User.
-                    [Formula: update users
-                        left join (
-                            select count(id) as total, user_id
-                            from subscriptions
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_subscriptions = count(grouped.total)]',
     number_of_tracking_reminder_notifications                int unsigned                         null comment 'Number of Tracking Reminder Notifications for this User.
                     [Formula: update users
                         left join (
@@ -226,24 +154,6 @@ create table users
                         )
                         as grouped on users.id = grouped.user_id
                     set users.number_of_tracking_reminder_notifications = count(grouped.total)]',
-    number_of_user_tags                                      int unsigned                         null comment 'Number of User Tags for this User.
-                    [Formula: update users
-                        left join (
-                            select count(id) as total, user_id
-                            from user_tags
-                            group by user_id
-                        )
-                        as grouped on users.id = grouped.user_id
-                    set users.number_of_user_tags = count(grouped.total)]',
-    number_of_users_where_referrer_user                      int unsigned                         null comment 'Number of Users for this Referrer User.
-                    [Formula: update users
-                        left join (
-                            select count(ID) as total, referrer_user_id
-                            from users
-                            group by referrer_user_id
-                        )
-                        as grouped on users.id = grouped.referrer_user_id
-                    set users.number_of_users_where_referrer_user = count(grouped.total)]',
     share_all_data                                           tinyint(1) default 0                 not null,
     deletion_reason                                          varchar(280)                         null comment 'The reason the user deleted their account.',
     number_of_patients                                       int unsigned                         not null,
@@ -259,9 +169,7 @@ create table users
     constraint users_slug_uindex
         unique (slug),
     constraint users_variables_id_fk
-        foreign key (primary_outcome_global_variable_id) references global_variables (id),
-    constraint users_users_id_fk
-        foreign key (referrer_user_id) references users (id)
+        foreign key (primary_outcome_global_variable_id) references global_variables (id)
 )
     comment 'General user information and overall statistics' charset = utf8;
 

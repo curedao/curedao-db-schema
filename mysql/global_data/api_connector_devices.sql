@@ -4,7 +4,7 @@ create table api_connector_devices
         primary key,
     name              tinytext      null,
     display_name      tinytext      null,
-    image             varchar(2083) null,
+    image_url             varchar(2083) null,
     get_it_url        varchar(2083) null,
     short_description mediumtext    null,
     long_description  longtext      null,
