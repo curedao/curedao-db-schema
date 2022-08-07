@@ -5,7 +5,7 @@ create table measurement_exports
     user_id       bigint unsigned                                      not null,
     oauth_client_id     varchar(255)                                         null,
     status        varchar(32)                                          not null comment 'Status of Measurement Export',
-    type          enum ('user', 'app')       default 'user'            not null comment 'Whether user''s measurement export request or app users',
+    type          enum ('user', 'app')       default 'user'            not null comment 'Whether user measurement export request or app users',
     output_type   enum ('csv', 'xls', 'pdf') default 'csv'             not null comment 'Output type of export file',
     error_message varchar(255)                                         null comment 'Error message',
     created_at    timestamp                  default CURRENT_TIMESTAMP not null,

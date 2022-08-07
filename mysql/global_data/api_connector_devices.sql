@@ -17,5 +17,5 @@ create table api_connector_devices
     deleted_at        timestamp     null,
     is_parent         tinyint       null
 )
-    comment 'Various devices whose data may be obtained from a given connector''s API' charset = utf8;
+    comment 'Various devices whose data may be obtained from a given connector API' charset = utf8;
 

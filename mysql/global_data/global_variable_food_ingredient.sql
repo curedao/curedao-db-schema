@@ -9,7 +9,7 @@ create table global_variable_food_ingredient
 mean value as a function of the number of data points.',
     ingredient_global_variable_unit_id smallint unsigned                   null comment 'The id for the unit of the tag (ingredient) variable.',
     food_global_variable_unit_id       smallint unsigned                   null comment 'The unit id for the food or composite variable to be tagged.',
-    conversion_factor                  double                              not null comment 'Number by which we multiply the food or composite variable''s value to obtain the ingredient variable''s value',
+    conversion_factor                  double                              not null comment 'Number by which we multiply the food or composite variable value to obtain the ingredient variable value',
     oauth_client_id                          varchar(80)                         null,
     created_at                         timestamp default CURRENT_TIMESTAMP not null,
     updated_at                         timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,

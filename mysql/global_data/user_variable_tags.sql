@@ -4,7 +4,7 @@ create table user_variable_tags
         primary key,
     tagged_global_variable_id      int unsigned                        not null comment 'This is the id of the variable being tagged with an ingredient or something.',
     tag_global_variable_id         int unsigned                        not null comment 'This is the id of the ingredient variable whose value is determined based on the value of the tagged variable.',
-    conversion_factor       double                              not null comment 'Number by which we multiply the tagged variable''s value to obtain the tag variable''s value',
+    conversion_factor       double                              not null comment 'Number by which we multiply the tagged variable value to obtain the tag variable value',
     user_id                 bigint unsigned                     not null,
     created_at              timestamp default CURRENT_TIMESTAMP not null,
     updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
