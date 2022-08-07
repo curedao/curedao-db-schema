@@ -13,7 +13,7 @@ create table api_connector_devices
     qm_client         tinyint       null,
     created_at        timestamp     null,
     updated_at        timestamp     null,
-    client_id         tinytext      null,
+    oauth_client_id         tinytext      null,
     deleted_at        timestamp     null,
     is_parent         tinyint       null
 )

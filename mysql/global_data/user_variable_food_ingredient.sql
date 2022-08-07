@@ -10,19 +10,19 @@ mean value as a function of the number of data points.',
     ingredient_user_variable_unit_id smallint unsigned                   null comment 'The id for the unit of the tag (ingredient) user variable.',
     food_user_variable_unit_id       smallint unsigned                   null comment 'The unit id for the food or composite user variable to be tagged.',
     conversion_factor                double                              not null comment 'Number by which we multiply the food or composite user variable''s value to obtain the ingredient user variable''s value',
-    client_id                        varchar(80)                         null,
+    oauth_client_id                        varchar(80)                         null,
     created_at                       timestamp default CURRENT_TIMESTAMP not null,
     updated_at                       timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     deleted_at                       timestamp                           null,
     constraint UK_tag_tagged
         unique (food_user_variable_id, ingredient_user_variable_id),
-    constraint user_variable_child_parent_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
-    constraint user_variable_food_global_variable_id_variables_id_fk
+    constraint user_variable_child_parent_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
+    constraint user_variable_food_gv_id_variables_id_fk
         foreign key (food_user_variable_id) references user_variables (id),
     constraint user_variable_food_variable_unit_id_fk
         foreign key (food_user_variable_unit_id) references units (id),
-    constraint user_variable_ingredient_global_variable_id_variables_id_fk
+    constraint user_variable_ingredient_gv_id_variables_id_fk
         foreign key (ingredient_user_variable_id) references user_variables (id),
     constraint user_variable_ingredient_variable_unit_id_fk
         foreign key (ingredient_user_variable_unit_id) references units (id)
@@ -31,10 +31,10 @@ mean value as a function of the number of data points.',
 ingredients by just entering the foods. The inferred intake levels will then be used to determine the outcomes of different nutrients on the user during analysis.'
     charset = utf8;
 
-create index user_variable_food_ingredient_client_id_fk
-    on user_variable_food_ingredient (client_id);
+create index user_variable_food_ingredient_oauth_client_id_fk
+    on user_variable_food_ingredient (oauth_client_id);
 
-create index user_variable_food_ingredient_tag_global_variable_id_variables_id_fk
+create index user_variable_food_ingredient_tag_gv_id_variables_id_fk
     on user_variable_food_ingredient (ingredient_user_variable_id);
 
 create index user_variable_food_ingredient_tag_variable_unit_id_fk

@@ -9,65 +9,62 @@ create table variable_categories
     duration_of_action                           int unsigned         default 86400              not null comment 'How long the outcome of a measurement in this variable lasts',
     onset_delay                                  int unsigned         default 0                  not null comment 'How long it takes for a measurement in this variable to take outcome',
     combination_operation                        enum ('SUM', 'MEAN') default 'SUM'              not null comment 'How to combine values of this variable (for instance, to see a summary of the values over a month) SUM or MEAN',
-    predictor_only                                   tinyint(1)           default 0                  not null comment 'A value of 1 indicates that this category is generally a predictor in a causal relationship.  An example of a predictorOnly category would be a category such as Work which would generally not be influenced by the behaviour of the user',
-    outcome                                      tinyint(1)                                      null,
     created_at                                   timestamp            default CURRENT_TIMESTAMP  not null,
     updated_at                                   timestamp            default CURRENT_TIMESTAMP  not null on update CURRENT_TIMESTAMP,
     image_url                                    tinytext                                        null comment 'Image URL',
     default_unit_id                              smallint unsigned    default 12                 null comment 'ID of the default unit for the category',
     deleted_at                                   timestamp                                       null,
-    manual_tracking                              tinyint(1)           default 0                  not null comment 'Should we include in manual tracking searches?',
+    is_manual_tracking                              tinyint(1)           default 0                  not null comment 'Should we include in manual tracking searches?',
     minimum_allowed_seconds_between_measurements int                                             null,
     average_seconds_between_measurements         int                                             null,
     median_seconds_between_measurements          int                                             null,
-    wp_post_id                                   bigint unsigned                                 null,
     filling_type                                 enum ('zero', 'none', 'interpolation', 'value') null,
-    number_of_outcome_population_studies         int unsigned                                    null comment 'Number of Global Population Studies for this predictor Variable Category.
+    number_of_outcome_global_studies         int unsigned                                    null comment 'Number of Global Global Studies for this predictor Variable Category.
                 [Formula:
                     update variable_categories
                         left join (
                             select count(id) as total, predictor_variable_category_id
-                            from aggregate_correlations
+                            from global_variable_relationships
                             group by predictor_variable_category_id
                         )
                         as grouped on variable_categories.id = grouped.predictor_variable_category_id
-                    set variable_categories.number_of_outcome_population_studies = count(grouped.total)
+                    set variable_categories.number_of_outcome_global_studies = count(grouped.total)
                 ]
                 ',
-    number_of_predictor_population_studies       int unsigned                                    null comment 'Number of Global Population Studies for this Effect Variable Category.
+    number_of_predictor_global_studies       int unsigned                                    null comment 'Number of Global Global Studies for this Effect Variable Category.
                 [Formula:
                     update variable_categories
                         left join (
                             select count(id) as total, outcome_variable_category_id
-                            from aggregate_correlations
+                            from global_variable_relationships
                             group by outcome_variable_category_id
                         )
                         as grouped on variable_categories.id = grouped.outcome_variable_category_id
-                    set variable_categories.number_of_predictor_population_studies = count(grouped.total)
+                    set variable_categories.number_of_predictor_global_studies = count(grouped.total)
                 ]
                 ',
-    number_of_outcome_case_studies               int unsigned                                    null comment 'Number of Individual Case Studies for this predictor Variable Category.
+    number_of_outcome_user_studies               int unsigned                                    null comment 'Number of Individual Case Studies for this predictor Variable Category.
                 [Formula:
                     update variable_categories
                         left join (
                             select count(id) as total, predictor_variable_category_id
-                            from correlations
+                            from relationships
                             group by predictor_variable_category_id
                         )
                         as grouped on variable_categories.id = grouped.predictor_variable_category_id
-                    set variable_categories.number_of_outcome_case_studies = count(grouped.total)
+                    set variable_categories.number_of_outcome_user_studies = count(grouped.total)
                 ]
                 ',
-    number_of_predictor_case_studies             int unsigned                                    null comment 'Number of Individual Case Studies for this Effect Variable Category.
+    number_of_predictor_user_studies             int unsigned                                    null comment 'Number of Individual Case Studies for this Effect Variable Category.
                 [Formula:
                     update variable_categories
                         left join (
                             select count(id) as total, outcome_variable_category_id
-                            from correlations
+                            from relationships
                             group by outcome_variable_category_id
                         )
                         as grouped on variable_categories.id = grouped.outcome_variable_category_id
-                    set variable_categories.number_of_predictor_case_studies = count(grouped.total)
+                    set variable_categories.number_of_predictor_user_studies = count(grouped.total)
                 ]
                 ',
     number_of_measurements                       int unsigned                                    null comment 'Number of Measurements for this Variable Category.
@@ -100,9 +97,11 @@ create table variable_categories
     is_public                                    tinyint(1)                                      null,
     synonyms                                     varchar(600)                                    not null comment 'The primary name and any synonyms for it. This field should be used for non-specific searches.',
     amazon_product_category                      varchar(100)                                    not null comment 'The Amazon equivalent product category.',
-    boring                                       tinyint(1)                                      null comment 'If boring, the category should be hidden by default.',
-    outcome_only                                  tinyint(1)                                      null comment 'outcome_only is true if people would never be interested in the outcomes of most variables in the category.',
-    predictor                                    tinyint(1)                                      null comment 'Predictor is true if people would like to know the outcomes of most variables in the category.',
+    is_boring                                       tinyint(1)                                      null comment 'If boring, the category should be hidden by default.',
+    is_outcome                                  tinyint(1)                                      null comment
+        'True if people would never be interested in the outcomes of most variables in the category.',
+    is_predictor                                    tinyint(1)                                      null comment
+        'True if people would like to know the outcomes of most variables in the category.',
     font_awesome                                 varchar(100)                                    null,
     ion_icon                                     varchar(100)                                    null,
     more_info                                    varchar(255)                                    null comment 'More information displayed when the user is adding reminders and going through the onboarding process. ',

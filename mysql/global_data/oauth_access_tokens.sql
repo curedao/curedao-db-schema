@@ -3,7 +3,7 @@ create table oauth_access_tokens
     id         varchar(100)    not null
         primary key,
     user_id    bigint unsigned null,
-    client_id  bigint unsigned not null,
+    oauth_client_id  bigint unsigned not null,
     name       varchar(255)    null,
     scopes     text            null,
     revoked    tinyint(1)      not null,

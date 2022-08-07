@@ -8,7 +8,7 @@ create table global_variables
     default_unit_id                                     smallint unsigned                               not null comment 'ID of the default unit for the variable',
     default_value                                       double                                          null comment '[]',
     predictor_only                                          tinyint(1)                                      null comment '[Admin-Setting] A value of 1 indicates that this variable is generally a predictor in a causal relationship.  An example of a predictorOnly variable would be a variable such as Cloud Cover which would generally not be influenced by the behaviour of the user',
-    client_id                                           varchar(80)                                     null comment '[Calculated] ID',
+    oauth_client_id                                           varchar(80)                                     null comment '[Calculated] ID',
     combination_operation                               enum ('SUM', 'MEAN')                            null comment '[Admin-Setting] How to combine values of this variable (for instance, to see a summary of the values over a month) SUM or MEAN',
     common_alias                                        varchar(125)                                    null comment '[Deprecated]',
     created_at                                          timestamp   default CURRENT_TIMESTAMP           not null comment '[db-gen]',
@@ -25,13 +25,13 @@ create table global_variables
     median                                              double                                          null comment 'Median',
     minimum_allowed_value                               double                                          null comment 'Minimum reasonable value for this variable (uses default unit)',
     minimum_recorded_value                              double                                          null comment 'Minimum recorded value of this variable',
-    number_of_aggregate_correlations_as_predictor           int unsigned                                    null comment 'Number of aggregate correlations for which this variable is the predictor variable',
+    number_of_global_variable_relationships_as_predictor           int unsigned                                    null comment 'Number of aggregate relationships for which this variable is the predictor variable',
     most_common_original_unit_id                        int                                             null comment 'Most common Unit ID',
     most_common_value                                   double                                          null comment 'Most common value',
-    number_of_aggregate_correlations_as_outcome          int unsigned                                    null comment 'Number of aggregate correlations for which this variable is the outcome variable',
+    number_of_global_variable_relationships_as_outcome          int unsigned                                    null comment 'Number of aggregate relationships for which this variable is the outcome variable',
     number_of_unique_values                             int                                             null comment 'Number of unique values',
     onset_delay                                         int unsigned                                    null comment 'How long it takes for a measurement in this variable to take outcome',
-    outcome                                             tinyint(1)                                      null comment 'Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally correlation calculations are only performed on outcome variables.',
+    outcome                                             tinyint(1)                                      null comment 'Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally relationship calculations are only performed on outcome variables.',
     parent_id                                           int unsigned                                    null comment 'ID of the parent variable if this variable has any parent',
     price                                               double                                          null comment 'Price',
     product_url                                         varchar(2083)                                   null comment 'Product URL',
@@ -80,7 +80,6 @@ create table global_variables
     earliest_tagged_measurement_start_at                timestamp                                       null comment '[]',
     latest_non_tagged_measurement_start_at              timestamp                                       null comment '[]',
     earliest_non_tagged_measurement_start_at            timestamp                                       null comment '[]',
-    wp_post_id                                          bigint unsigned                                 null comment '[]',
     number_of_soft_deleted_measurements                 int                                             null comment 'Formula: update variables v
                 inner join (
                     select measurements.global_variable_id, count(measurements.id) as number_of_soft_deleted_measurements
@@ -92,30 +91,30 @@ create table global_variables
             ',
     charts                                              json                                            null comment '[Calculated] Highcharts configuration',
     creator_user_id                                     bigint unsigned                                 not null comment '[api-gen]',
-    best_aggregate_correlation_id                       int                                             null comment '[Calculated] The strongest predictor or outcome for all users.',
+    best_global_variable_relationship_id                       int                                             null comment '[Calculated] The strongest predictor or outcome for all users.',
     filling_type                                        enum ('zero', 'none', 'interpolation', 'value') null comment '[]',
-    number_of_outcome_population_studies                int unsigned                                    null comment 'Number of Global Population Studies for this predictor Variable.
+    number_of_outcome_global_studies                int unsigned                                    null comment 'Number of Global Global Studies for this predictor Variable.
                 [Formula:
                     update variables
                         left join (
                             select count(id) as total, predictor_global_variable_id
-                            from aggregate_correlations
+                            from global_variable_relationships
                             group by predictor_global_variable_id
                         )
                         as grouped on variables.id = grouped.predictor_global_variable_id
-                    set variables.number_of_outcome_population_studies = count(grouped.total)
+                    set variables.number_of_outcome_global_studies = count(grouped.total)
                 ]
                 ',
-    number_of_predictor_population_studies              int unsigned                                    null comment 'Number of Global Population Studies for this Effect Variable.
+    number_of_predictor_global_studies              int unsigned                                    null comment 'Number of Global Global Studies for this Effect Variable.
                 [Formula:
                     update variables
                         left join (
                             select count(id) as total, outcome_global_variable_id
-                            from aggregate_correlations
+                            from global_variable_relationships
                             group by outcome_global_variable_id
                         )
                         as grouped on variables.id = grouped.outcome_global_variable_id
-                    set variables.number_of_predictor_population_studies = count(grouped.total)
+                    set variables.number_of_predictor_global_studies = count(grouped.total)
                 ]
                 ',
     number_of_applications_where_outcome_variable       int unsigned                                    null comment 'Number of Applications for this Outcome Variable.
@@ -165,27 +164,27 @@ create table global_variables
                     set variables.number_of_common_tags_where_tagged_variable = count(grouped.total)
                 ]
                 ',
-    number_of_outcome_case_studies                      int unsigned                                    null comment 'Number of Individual Case Studies for this predictor Variable.
+    number_of_outcome_user_studies                      int unsigned                                    null comment 'Number of Individual Case Studies for this predictor Variable.
                 [Formula:
                     update variables
                         left join (
                             select count(id) as total, predictor_global_variable_id
-                            from correlations
+                            from relationships
                             group by predictor_global_variable_id
                         )
                         as grouped on variables.id = grouped.predictor_global_variable_id
-                    set variables.number_of_outcome_case_studies = count(grouped.total)
+                    set variables.number_of_outcome_user_studies = count(grouped.total)
                 ]
                 ',
-    number_of_predictor_case_studies                    int unsigned                                    null comment 'Number of Individual Case Studies for this Effect Variable.
+    number_of_predictor_user_studies                    int unsigned                                    null comment 'Number of Individual Case Studies for this Effect Variable.
                     [Formula: update variables
                         left join (
                             select count(id) as total, outcome_global_variable_id
-                            from correlations
+                            from relationships
                             group by outcome_global_variable_id
                         )
                         as grouped on variables.id = grouped.outcome_global_variable_id
-                    set variables.number_of_predictor_case_studies = count(grouped.total)]',
+                    set variables.number_of_predictor_user_studies = count(grouped.total)]',
     number_of_measurements                              int unsigned                                    null comment 'Number of Measurements for this Variable.
                     [Formula: update variables
                         left join (
@@ -328,8 +327,8 @@ create table global_variables
         unique (slug),
     constraint qm_variables_loinc_core_id_fk
         foreign key (loinc_core_id) references loinc_core (id),
-    constraint variables_aggregate_correlations_id_fk
-        foreign key (best_aggregate_correlation_id) references global_study_results (id)
+    constraint variables_gv_relationships_id_fk
+        foreign key (best_global_variable_relationship_id) references global_variable_relationships (id)
             on delete set null,
     constraint variables_best_predictor_gv_id_fk
         foreign key (best_predictor_global_variable_id) references global_variables (id)
@@ -337,8 +336,8 @@ create table global_variables
     constraint variables_best_outcome_gv_id_fk
         foreign key (best_outcome_global_variable_id) references global_variables (id)
             on delete set null,
-    constraint variables_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+    constraint variables_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint variables_default_unit_id_fk
         foreign key (default_unit_id) references units (id),
     constraint variables_variable_category_id_fk

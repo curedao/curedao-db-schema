@@ -3,7 +3,7 @@ create table tracking_reminders
     id                                              int unsigned auto_increment
         primary key,
     user_id                                         bigint unsigned                     not null,
-    client_id                                       varchar(80)                         not null,
+    oauth_client_id                                       varchar(80)                         not null,
     global_variable_id                                     int unsigned                        not null comment 'Id for the variable to be tracked',
     default_value                                   double                              null comment 'Default value to use for the measurement when tracking',
     reminder_start_time                             time      default '00:00:00'        not null comment 'UTC time of
@@ -36,8 +36,8 @@ day at which reminder notifications should appear in the case of daily or less f
                     set tracking_reminders.number_of_tracking_reminder_notifications = count(grouped.total)]',
     constraint UK_user_var_time_freq
         unique (user_id, global_variable_id, reminder_start_time, reminder_frequency),
-    constraint tracking_reminders_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+    constraint tracking_reminders_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint tracking_reminders_user_id_fk
         foreign key (user_id) references users (id)
             on update cascade on delete cascade,
@@ -51,9 +51,9 @@ day at which reminder notifications should appear in the case of daily or less f
 )
     comment 'Manage what variables you want to track and when you want to be reminded.' charset = utf8;
 
-create index tracking_reminders_user_variables_global_variable_id_user_id_fk
+create index tracking_reminders_user_variables_gv_id_user_id_fk
     on tracking_reminders (global_variable_id, user_id);
 
 create index user_client
-    on tracking_reminders (user_id, client_id);
+    on tracking_reminders (user_id, oauth_client_id);
 

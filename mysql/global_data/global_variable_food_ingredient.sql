@@ -10,19 +10,19 @@ mean value as a function of the number of data points.',
     ingredient_global_variable_unit_id smallint unsigned                   null comment 'The id for the unit of the tag (ingredient) variable.',
     food_global_variable_unit_id       smallint unsigned                   null comment 'The unit id for the food or composite variable to be tagged.',
     conversion_factor                  double                              not null comment 'Number by which we multiply the food or composite variable''s value to obtain the ingredient variable''s value',
-    client_id                          varchar(80)                         null,
+    oauth_client_id                          varchar(80)                         null,
     created_at                         timestamp default CURRENT_TIMESTAMP not null,
     updated_at                         timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     deleted_at                         timestamp                           null,
     constraint UK_tag_tagged
         unique (food_global_global_variable_id, ingredient_global_global_variable_id),
-    constraint common_tags_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
-    constraint common_tags_tag_global_variable_id_variables_id_fk
+    constraint common_tags_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
+    constraint common_tags_tag_gv_id_variables_id_fk
         foreign key (ingredient_global_global_variable_id) references global_variables (id),
     constraint common_tags_tag_variable_unit_id_fk
         foreign key (ingredient_global_variable_unit_id) references units (id),
-    constraint common_tags_tagged_global_variable_id_variables_id_fk
+    constraint common_tags_tagged_gv_id_variables_id_fk
         foreign key (food_global_global_variable_id) references global_variables (id),
     constraint common_tags_tagged_variable_unit_id_fk
         foreign key (food_global_variable_unit_id) references units (id)

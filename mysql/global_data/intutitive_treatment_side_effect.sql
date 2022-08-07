@@ -12,7 +12,7 @@ create table intuitive_treatment_side_effect
     deleted_at              timestamp                           null,
     constraint treatment_id_side_effect_id_uindex
         unique (treatment_id, side_effect_id),
-    constraint treatment_global_variable_id_side_effect_gv_id_uindex
+    constraint treatment_gv_id_side_effect_gv_id_uindex
         unique (treatment_global_variable_id, side_effect_global_variable_id),
     constraint side_effect_variables_id_fk
         foreign key (side_effect_global_variable_id) references global_variables (id),

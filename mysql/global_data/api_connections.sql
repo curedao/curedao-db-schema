@@ -2,7 +2,7 @@ create table api_connections
 (
     id                                int(11) unsigned auto_increment
         primary key,
-    client_id                         varchar(80)                         null,
+    oauth_client_id                         varchar(80)                         null,
     user_id                           bigint unsigned                     not null,
     connector_id                      int(11) unsigned                    not null comment 'The id for the connector data source for which the connection is connected',
     connect_status                    varchar(32)                         not null comment 'Indicates whether a connector is currently connected to a service for a user.',
@@ -22,7 +22,6 @@ create table api_connections
     reason_for_import                 varchar(255)                        null,
     user_error_message                text                                null,
     internal_error_message            text                                null,
-    wp_post_id                        bigint unsigned                     null,
     number_of_connector_imports       int unsigned                        null comment 'Number of Connector Imports for this Connection.
                 [Formula:
                     update connections
@@ -66,8 +65,8 @@ create table api_connections
         unique (user_id, connector_id),
     constraint connections_slug_uindex
         unique (slug),
-    constraint connections_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+    constraint connections_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint connections_connectors_id_fk
         foreign key (connector_id) references api_connectors (id),
     constraint connections_user_id_fk

@@ -8,7 +8,7 @@ create table user_meta
     updated_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     created_at timestamp default CURRENT_TIMESTAMP not null,
     deleted_at timestamp                           null,
-    client_id  varchar(255)                        null,
+    oauth_client_id  varchar(255)                        null,
     constraint user_meta_users_id_fk
         foreign key (user_id) references users (id)
 )

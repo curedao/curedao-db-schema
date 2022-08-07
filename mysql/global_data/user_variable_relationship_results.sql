@@ -1,11 +1,11 @@
-create table user_study_results
+create table user_variable_relationships
 (
     id                                                           int auto_increment
         primary key,
     user_id                                                      bigint unsigned                                                 not null,
     predictor_global_variable_id                                            int unsigned                                                    not null,
     outcome_global_variable_id                                           int unsigned                                                    not null,
-    qm_score                                                     double                                                          null comment 'A number representative of the relative importance of the relationship based on the strength,
+    sinn_rank                                                     double                                                          null comment 'A number representative of the relative importance of the relationship based on the strength,
                     usefulness, and plausible causality.  The higher the number, the greater the perceived importance.
                     This value can be used for sorting relationships by importance.  ',
     forward_pearson_correlation_coefficient                      float(10, 4)                                                    null comment 'Pearson correlation coefficient between predictor and outcome measurements',
@@ -25,7 +25,7 @@ create table user_study_results
     predictor_number_of_processed_daily_measurements                 int                                                             not null,
     predictor_number_of_raw_measurements                             int                                                             not null,
     predictor_unit_id                                                smallint unsigned                                               null comment 'Unit ID of predictor',
-    confidence_interval                                          double                                                          not null comment 'A margin of error around the outcome size.  Wider confidence intervals reflect greater uncertainty about the true value of the correlation.',
+    confidence_interval                                          double                                                          not null comment 'A margin of error around the outcome size.  Wider confidence intervals reflect greater uncertainty about the true value of the relationship.',
     critical_t_value                                             double                                                          not null comment 'Value of t from lookup table which t must exceed for significance.',
     created_at                                                   timestamp default CURRENT_TIMESTAMP                             not null,
     data_source_name                                             varchar(255)                                                    null,
@@ -35,25 +35,24 @@ create table user_study_results
     outcome_filling_value                                         double                                                          null,
     outcome_number_of_processed_daily_measurements                int                                                             not null,
     outcome_number_of_raw_measurements                            int                                                             not null,
-    forward_spearman_correlation_coefficient                     float                                                           not null comment 'Predictive spearman correlation of the lagged pair data. While the Pearson correlation assesses linear relationships, the Spearman correlation assesses monotonic relationships (whether linear or not).',
+    forward_spearman_relationship_coefficient                     float                                                           not null comment 'Predictive spearman relationship of the lagged pair data. While the Pearson correlation assesses linear relationships, the Spearman relationship assesses monotonic relationships (whether linear or not).',
     number_of_days                                               int                                                             not null,
-    number_of_pairs                                              int                                                             not null comment 'Number of points that went into the correlation calculation',
+    number_of_pairs                                              int                                                             not null comment 'Number of points that went into the relationship calculation',
     onset_delay                                                  int                                                             not null comment 'User estimated or default time after predictor measurement before a perceivable outcome is observed',
     onset_delay_with_strongest_pearson_correlation               int(10)                                                         null,
     optimal_pearson_product                                      double                                                          null comment 'Optimal Pearson Product',
-    p_value                                                      double                                                          null comment 'The measure of statistical significance. A value less than 0.05 means that a correlation is statistically significant or consistent enough that it is unlikely to be a coincidence.',
+    p_value                                                      double                                                          null comment 'The measure of statistical significance. A value less than 0.05 means that a relationship is statistically significant or consistent enough that it is unlikely to be a coincidence.',
     pearson_correlation_with_no_onset_delay                      float                                                           null,
-    predictive_pearson_correlation_coefficient                   double                                                          null comment 'Predictive Pearson Correlation Coefficient',
-    reverse_pearson_correlation_coefficient                      double                                                          null comment 'Correlation when predictor and outcome are reversed. For any causal relationship, the forward correlation should exceed the reverse correlation',
+    predictive_relationship_coefficient                   double                                                          null comment 'Predictive Pearson Relationship Coefficient',
+    reverse_pearson_correlation_coefficient                      double                                                          null comment 'Relationship when predictor and outcome are reversed. For any causal relationship, the forward relationship should exceed the reverse relationship',
     statistical_significance                                     float(10, 4)                                                    null comment 'A function of the outcome size and sample size',
     strongest_pearson_correlation_coefficient                    float                                                           null,
-    t_value                                                      double                                                          null comment 'Function of correlation and number of samples.',
+    t_value                                                      double                                                          null comment 'Function of relationship and number of samples.',
     updated_at                                                   timestamp default CURRENT_TIMESTAMP                             not null on update CURRENT_TIMESTAMP,
     grouped_predictor_value_closest_to_value_predicting_low_outcome  double                                                          not null comment 'A realistic daily value (not a fraction from averaging) that typically precedes below average outcome values. ',
     grouped_predictor_value_closest_to_value_predicting_high_outcome double                                                          not null comment 'A realistic daily value (not a fraction from averaging) that typically precedes below average outcome values. ',
-    client_id                                                    varchar(255)                                                    null,
+    oauth_client_id                                                    varchar(255)                                                    null,
     published_at                                                 timestamp                                                       null,
-    wp_post_id                                                   bigint unsigned                                                 null,
     status                                                       varchar(25)                                                     null,
     predictor_variable_category_id                                   tinyint unsigned                                                not null,
     outcome_variable_category_id                                  tinyint unsigned                                                not null,
@@ -81,7 +80,7 @@ create table user_study_results
     z_score                                                      float                                                           null comment 'The absolute value of the change over duration of action following the onset delay of treatment divided by the baseline outcome relative standard deviation. A.K.A The number of standard deviations from the mean. A zScore > 2 means pValue < 0.05 and is typically considered statistically significant.',
     experiment_end_at                                            timestamp                                                       not null comment 'The latest data used in the analysis. ',
     experiment_start_at                                          timestamp                                                       not null comment 'The earliest data used in the analysis. ',
-    aggregate_correlation_id                                     int                                                             null,
+    global_variable_relationship_id                                     int                                                             null,
     aggregated_at                                                timestamp                                                       null,
     usefulness_vote                                              int                                                             null comment 'The opinion of the data owner on whether or not knowledge of this relationship is useful.
                         -1 corresponds to a down vote. 1 corresponds to an up vote. 0 corresponds to removal of a
@@ -90,8 +89,8 @@ create table user_study_results
                         by which the predictor variable could influence the outcome variable.',
     deletion_reason                                              varchar(280)                                                    null comment 'The reason the variable was deleted.',
     record_size_in_kb                                            int                                                             null,
-    correlations_over_durations                                  text                                                            not null comment 'Pearson correlations calculated with various duration of action lengths. This can be used to compare short and long term outcomes. ',
-    correlations_over_delays                                     text                                                            not null comment 'Pearson correlations calculated with various onset delay lags used to identify reversed causality or asses the significant of a correlation with a given lag parameters. ',
+    relationships_over_durations                                  text                                                            not null comment 'Pearson correlations calculated with various duration of action lengths. This can be used to compare short and long term outcomes. ',
+    relationships_over_delays                                     text                                                            not null comment 'Pearson correlations calculated with various onset delay lags used to identify reversed causality or asses the significant of a relationship with a given lag parameters. ',
     is_public                                                    tinyint(1)                                                      null,
     sort_order                                                   int                                                             not null,
     boring                                                       tinyint(1)                                                      null comment 'The relationship is boring if it is obvious, the predictor is not controllable, the outcome is not a goal, the relationship could not be causal, or the confidence is low. ',
@@ -102,59 +101,59 @@ create table user_study_results
     number_of_up_votes                                           int                                                             not null comment 'Number of people who feel this relationship is plausible and useful. ',
     number_of_down_votes                                         int                                                             not null comment 'Number of people who feel this relationship is implausible or not useful. ',
     strength_level                                               enum ('VERY STRONG', 'STRONG', 'MODERATE', 'WEAK', 'VERY WEAK') not null comment 'Strength level describes magnitude of the change in outcome observed following changes in the predictor. ',
-    confidence_level                                             enum ('HIGH', 'MEDIUM', 'LOW')                                  not null comment 'Describes the confidence that the strength level will remain consist in the future.  The more data there is, the lesser the chance that the findings are a spurious correlation. ',
+    confidence_level                                             enum ('HIGH', 'MEDIUM', 'LOW')                                  not null comment 'Describes the confidence that the strength level will remain consist in the future.  The more data there is, the lesser the chance that the findings are a spurious relationship. ',
     relationship                                                 enum ('POSITIVE', 'NEGATIVE', 'NONE')                           not null comment 'If higher predictor values generally precede HIGHER outcome values, the relationship is considered POSITIVE.  If higher predictor values generally precede LOWER outcome values, the relationship is considered NEGATIVE. ',
     slug                                                         varchar(200)                                                    null comment 'The slug is the part of a URL that identifies a page in human-readable keywords.',
-    constraint correlations_pk
+    constraint relationships_pk
         unique (user_id, predictor_global_variable_id, outcome_global_variable_id),
-    constraint correlations_slug_uindex
+    constraint relationships_slug_uindex
         unique (slug),
-    constraint correlations_user_id_predictor_global_variable_id_outcome_gv_id_uindex
+    constraint relationships_user_id_predictor_gv_id_outcome_gv_id_uindex
         unique (user_id, predictor_global_variable_id, outcome_global_variable_id),
-    constraint correlations_aggregate_correlations_id_fk
-        foreign key (aggregate_correlation_id) references global_study_results (id),
-    constraint correlations_predictor_unit_id_fk
+    constraint relationships_gv_relationships_id_fk
+        foreign key (global_variable_relationship_id) references global_variable_relationships (id),
+    constraint relationships_predictor_unit_id_fk
         foreign key (predictor_unit_id) references units (id),
-    constraint correlations_predictor_variable_category_id_fk
+    constraint relationships_predictor_variable_category_id_fk
         foreign key (predictor_variable_category_id) references variable_categories (id),
-    constraint correlations_predictor_gv_id_fk
+    constraint relationships_predictor_gv_id_fk
         foreign key (predictor_global_variable_id) references global_variables (id),
-    constraint correlations_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
-    constraint correlations_outcome_variable_category_id_fk
+    constraint relationships_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
+    constraint relationships_outcome_variable_category_id_fk
         foreign key (outcome_variable_category_id) references variable_categories (id),
-    constraint correlations_outcome_gv_id_fk
+    constraint relationships_outcome_gv_id_fk
         foreign key (outcome_global_variable_id) references global_variables (id),
-    constraint correlations_user_id_fk
+    constraint relationships_user_id_fk
         foreign key (user_id) references users (id),
-    constraint correlations_user_variables_predictor_user_variable_id_fk
+    constraint relationships_user_variables_predictor_user_variable_id_fk
         foreign key (predictor_user_variable_id) references user_variables (id)
             on update cascade on delete cascade,
-    constraint correlations_user_variables_outcome_user_variable_id_fk
+    constraint relationships_user_variables_outcome_user_variable_id_fk
         foreign key (outcome_user_variable_id) references user_variables (id)
             on update cascade on delete cascade
 )
     comment 'Examination of the relationship between predictor and outcome variables.  This includes the potential optimal values for a given variable. '
     charset = utf8;
 
-create index correlations_analysis_started_at_index
-    on user_study_results (analysis_started_at);
+create index relationships_analysis_started_at_index
+    on user_variable_relationships (analysis_started_at);
 
-create index correlations_deleted_at_analysis_ended_at_index
-    on user_study_results (deleted_at, analysis_ended_at);
+create index relationships_deleted_at_analysis_ended_at_index
+    on user_variable_relationships (deleted_at, analysis_ended_at);
 
-create index correlations_deleted_at_z_score_index
-    on user_study_results (deleted_at, z_score);
+create index relationships_deleted_at_z_score_index
+    on user_variable_relationships (deleted_at, z_score);
 
-create index correlations_updated_at_index
-    on user_study_results (updated_at);
+create index relationships_updated_at_index
+    on user_variable_relationships (updated_at);
 
-create index correlations_user_id_deleted_at_qm_score_index
-    on user_study_results (user_id, deleted_at, qm_score);
+create index relationships_user_id_deleted_at_sinn_rank_index
+    on user_variable_relationships (user_id, deleted_at, sinn_rank);
 
-create index user_id_predictor_global_variable_id_deleted_at_qm_score_index
-    on user_study_results (user_id, predictor_global_variable_id, deleted_at, qm_score);
+create index user_id_predictor_gv_id_deleted_at_sinn_rank_index
+    on user_variable_relationships (user_id, predictor_global_variable_id, deleted_at, sinn_rank);
 
-create index user_id_outcome_global_variable_id_deleted_at_qm_score_index
-    on user_study_results (user_id, outcome_global_variable_id, deleted_at, qm_score);
+create index user_id_outcome_gv_id_deleted_at_sinn_rank_index
+    on user_variable_relationships (user_id, outcome_global_variable_id, deleted_at, sinn_rank);
 

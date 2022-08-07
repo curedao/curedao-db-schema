@@ -2,7 +2,7 @@ create table user_clients
 (
     id                      int auto_increment
         primary key,
-    client_id               varchar(80)                         null,
+    oauth_client_id               varchar(80)                         null,
     created_at              timestamp default CURRENT_TIMESTAMP not null,
     deleted_at              timestamp                           null,
     earliest_measurement_at timestamp                           null comment 'Earliest measurement time for this variable and client',
@@ -11,9 +11,9 @@ create table user_clients
     updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     user_id                 bigint unsigned                     not null,
     constraint user
-        unique (user_id, client_id),
-    constraint user_clients_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+        unique (user_id, oauth_client_id),
+    constraint user_clients_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint user_clients_user_id_fk
         foreign key (user_id) references users (id)
 )

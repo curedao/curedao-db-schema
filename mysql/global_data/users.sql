@@ -2,33 +2,16 @@ create table users
 (
     id                                                       bigint unsigned auto_increment comment 'Unique number assigned to each user.'
         primary key,
-    client_id                                                varchar(255)                         not null,
+    oauth_client_id                                                varchar(255)                         not null,
     username                                               varchar(60)                          null comment 'Unique username for the user.',
     email                                               varchar(100)                         null comment 'Email address of the user.',
     user_url                                                 varchar(2083)                        null comment 'URL of the user, e.g. website address.',
-    user_registered                                          datetime                             null comment 'Time and date the user registered.',
-    user_status                                              int                                  null comment 'Was used in Multisite pre WordPress 3.0 to indicate a spam user.',
     display_name                                             varchar(250)                         null comment 'Desired name to be used publicly in the site, can be username, slug, first name or last name defined in user_meta.',
-    avatar_image                                             varchar(2083)                        null,
-    reg_provider                                             varchar(25)                          null comment 'Registered via',
-    provider_id                                              varchar(255)                         null comment 'Unique id from provider',
-    provider_token                                           varchar(255)                         null comment 'Access token from provider',
+    image                                             varchar(2083)                        null,
     updated_at                                               timestamp  default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     created_at                                               timestamp  default CURRENT_TIMESTAMP not null,
-    unsubscribed                                             tinyint(1) default 0                 null comment 'Indicates whether the use has specified that they want no emails or any form of communication. ',
-    old_user                                                 tinyint(1) default 0                 null,
-    stripe_active                                            tinyint(1) default 0                 null,
-    stripe_id                                                varchar(255)                         null,
-    stripe_subscription                                      varchar(255)                         null,
-    stripe_plan                                              varchar(100)                         null,
-    trial_ends_at                                            timestamp                            null,
-    subscription_ends_at                                     timestamp                            null,
-    roles                                                    varchar(255)                         null comment 'An array containing all roles possessed by the user.  This indicates whether the use has roles such as administrator, developer, patient, student, researcher or physician. ',
     time_zone_offset                                         int                                  null comment 'The time-zone offset is the difference, in minutes, between UTC and local time. Note that this means that the offset is positive if the local timezone is behind UTC (i.e. UTC−06:00 Central) and negative if it is ahead.',
     deleted_at                                               timestamp                            null,
-    earliest_reminder_time                                   time       default '06:00:00'        not null comment 'Earliest time of day at which reminders should appear in HH:MM:SS format in user timezone',
-    latest_reminder_time                                     time       default '22:00:00'        not null comment 'Latest time of day at which reminders should appear in HH:MM:SS format in user timezone',
-    push_notifications_enabled                               tinyint(1) default 1                 null comment 'Should we send the user push notifications?',
     track_location                                           tinyint(1) default 0                 null comment 'Set to true if the user wants to track their location',
     combine_notifications                                    tinyint(1) default 0                 null comment 'Should we combine push notifications or send one for each tracking reminder notification?',
     send_reminder_notification_emails                        tinyint(1) default 0                 null comment 'Should we send reminder notification emails?',
@@ -60,19 +43,18 @@ create table users
     deleted                                                  tinyint(2) default 0                 not null,
     last_login_at                                            timestamp                            null,
     timezone                                                 varchar(255)                         null,
-    number_of_correlations                                   int                                  null,
+    number_of_relationships                                   int                                  null,
     number_of_connections                                    int                                  null,
     number_of_tracking_reminders                             int                                  null,
     number_of_user_variables                                 int                                  null,
     number_of_raw_measurements_with_tags                     int                                  null,
-    number_of_raw_measurements_with_tags_at_last_correlation int                                  null,
+    number_of_raw_measurements_with_tags_at_last_relationship int                                  null,
     number_of_votes                                          int                                  null,
     number_of_studies                                        int                                  null,
-    last_correlation_at                                      timestamp                            null,
+    last_relationship_at                                      timestamp                            null,
     last_email_at                                            timestamp                            null,
     last_push_at                                             timestamp                            null,
     primary_outcome_global_variable_id                              int unsigned                         null,
-    wp_post_id                                               bigint unsigned                      null,
     analysis_ended_at                                        timestamp                            null,
     analysis_requested_at                                    timestamp                            null,
     analysis_started_at                                      timestamp                            null,
@@ -90,7 +72,7 @@ create table users
                             from applications
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_applications = count(grouped.total)
                 ]
                 ',
@@ -102,7 +84,7 @@ create table users
                             from oauth_access_tokens
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_oauth_access_tokens = count(grouped.total)
                 ]
                 ',
@@ -114,7 +96,7 @@ create table users
                             from oauth_authorization_codes
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_oauth_authorization_codes = count(grouped.total)
                 ]
                 ',
@@ -122,11 +104,11 @@ create table users
                 [Formula:
                     update users
                         left join (
-                            select count(client_id) as total, user_id
+                            select count(oauth_client_id) as total, user_id
                             from oauth_clients
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_oauth_clients = count(grouped.total)
                 ]
                 ',
@@ -138,7 +120,7 @@ create table users
                             from oauth_refresh_tokens
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_oauth_refresh_tokens = count(grouped.total)
                 ]
                 ',
@@ -150,7 +132,7 @@ create table users
                             from button_clicks
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_button_clicks = count(grouped.total)
                 ]
                 ',
@@ -162,7 +144,7 @@ create table users
                             from collaborators
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_collaborators = count(grouped.total)
                 ]
                 ',
@@ -174,7 +156,7 @@ create table users
                             from connector_imports
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_connector_imports = count(grouped.total)
                 ]
                 ',
@@ -186,7 +168,7 @@ create table users
                             from connector_requests
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_connector_requests = count(grouped.total)
                 ]
                 ',
@@ -197,7 +179,7 @@ create table users
                             from measurement_exports
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_measurement_exports = count(grouped.total)]',
     number_of_measurement_imports                            int unsigned                         null comment 'Number of Measurement Imports for this User.
                     [Formula: update users
@@ -206,7 +188,7 @@ create table users
                             from measurement_imports
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_measurement_imports = count(grouped.total)]',
     number_of_measurements                                   int unsigned                         null comment 'Number of Measurements for this User.
                     [Formula: update users
@@ -215,7 +197,7 @@ create table users
                             from measurements
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_measurements = count(grouped.total)]',
     number_of_sent_emails                                    int unsigned                         null comment 'Number of Sent Emails for this User.
                     [Formula: update users
@@ -224,7 +206,7 @@ create table users
                             from sent_emails
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_sent_emails = count(grouped.total)]',
     number_of_subscriptions                                  int unsigned                         null comment 'Number of Subscriptions for this User.
                     [Formula: update users
@@ -233,7 +215,7 @@ create table users
                             from subscriptions
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_subscriptions = count(grouped.total)]',
     number_of_tracking_reminder_notifications                int unsigned                         null comment 'Number of Tracking Reminder Notifications for this User.
                     [Formula: update users
@@ -242,7 +224,7 @@ create table users
                             from tracking_reminder_notifications
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_tracking_reminder_notifications = count(grouped.total)]',
     number_of_user_tags                                      int unsigned                         null comment 'Number of User Tags for this User.
                     [Formula: update users
@@ -251,7 +233,7 @@ create table users
                             from user_tags
                             group by user_id
                         )
-                        as grouped on users.ID = grouped.user_id
+                        as grouped on users.id = grouped.user_id
                     set users.number_of_user_tags = count(grouped.total)]',
     number_of_users_where_referrer_user                      int unsigned                         null comment 'Number of Users for this Referrer User.
                     [Formula: update users
@@ -260,7 +242,7 @@ create table users
                             from users
                             group by referrer_user_id
                         )
-                        as grouped on users.ID = grouped.referrer_user_id
+                        as grouped on users.id = grouped.referrer_user_id
                     set users.number_of_users_where_referrer_user = count(grouped.total)]',
     share_all_data                                           tinyint(1) default 0                 not null,
     deletion_reason                                          varchar(280)                         null comment 'The reason the user deleted their account.',

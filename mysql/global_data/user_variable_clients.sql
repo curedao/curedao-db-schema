@@ -2,7 +2,7 @@ create table user_variable_clients
 (
     id                      int auto_increment
         primary key,
-    client_id               varchar(80)                         not null,
+    oauth_client_id               varchar(80)                         not null,
     created_at              timestamp default CURRENT_TIMESTAMP not null,
     deleted_at              timestamp                           null,
     earliest_measurement_at timestamp                           null comment 'Earliest measurement time for this variable and client',
@@ -13,9 +13,9 @@ create table user_variable_clients
     user_variable_id        int(11) unsigned                    not null,
     global_variable_id             int(11) unsigned                    not null comment 'Id of variable',
     constraint user
-        unique (user_id, global_variable_id, client_id),
-    constraint user_variable_clients_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+        unique (user_id, global_variable_id, oauth_client_id),
+    constraint user_variable_clients_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint user_variable_clients_user_id_fk
         foreign key (user_id) references users (id),
     constraint user_variable_clients_user_variables_user_variable_id_fk

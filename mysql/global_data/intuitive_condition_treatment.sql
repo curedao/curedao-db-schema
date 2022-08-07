@@ -18,7 +18,7 @@ create table intuitive_condition_treatment
     deleted_at            timestamp                           null,
     constraint treatment_id_condition_id_uindex
         unique (treatment_id, condition_id),
-    constraint treatment_global_variable_id_condition_gv_id_uindex
+    constraint treatment_gv_id_condition_gv_id_uindex
         unique (treatment_global_variable_id, condition_global_variable_id),
     constraint ct_condition_treatment_conditions_id_fk
         foreign key (condition_id) references intuitive_conditions (id),

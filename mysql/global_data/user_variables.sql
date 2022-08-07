@@ -3,7 +3,7 @@ create table user_variables
     id                                                   int unsigned auto_increment
         primary key,
     parent_id                                            int unsigned                             null comment 'ID of the parent variable if this variable has any parent',
-    client_id                                            varchar(80)                              null,
+    oauth_client_id                                            varchar(80)                              null,
     user_id                                              bigint unsigned                          not null,
     global_variable_id                                          int unsigned                             not null comment 'ID of variable',
     default_unit_id                                      smallint unsigned                        null comment 'ID of unit to use for this variable',
@@ -22,7 +22,7 @@ create table user_variables
     last_original_unit_id                                smallint unsigned                        null comment 'ID of last original Unit',
     `last_value`                                         double                                   null comment 'Last Value',
     last_original_value                                  double unsigned                          null comment 'Last original value which is stored',
-    number_of_correlations                               int                                      null comment 'Number of correlations for this variable',
+    number_of_relationships                               int                                      null comment 'Number of relationships for this variable',
     status                                               varchar(25)                              null,
     standard_deviation                                   double                                   null comment 'Standard deviation',
     variance                                             double                                   null comment 'Variance',
@@ -42,22 +42,22 @@ create table user_variables
     location                                             varchar(255)                             null,
     created_at                                           timestamp    default CURRENT_TIMESTAMP   not null,
     updated_at                                           timestamp    default CURRENT_TIMESTAMP   not null on update CURRENT_TIMESTAMP,
-    outcome                                              tinyint(1)                               null comment 'Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally correlation calculations are only performed on outcome variables',
+    outcome                                              tinyint(1)                               null comment 'Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally relationship calculations are only performed on outcome variables',
     data_sources_count                                   text                                     null comment 'Array of connector or client measurement data source names as key and number of measurements as value',
     earliest_filling_time                                int                                      null comment 'Earliest filling time',
     latest_filling_time                                  int                                      null comment 'Latest filling time',
     last_processed_daily_value                           double                                   null comment 'Last value for user after daily aggregation and filling',
     outcome_of_interest                                  tinyint(1)   default 0                   null,
     predictor_of_interest                                tinyint(1)   default 0                   null,
-    experiment_start_time                                timestamp                                null,
+    experiment_start_at                                timestamp                                null,
     experiment_end_time                                  timestamp                                null,
     description                                          text                                     null,
     alias                                                varchar(125)                             null,
     deleted_at                                           timestamp                                null,
     second_to_last_value                                 double                                   null,
     third_to_last_value                                  double                                   null,
-    number_of_user_correlations_as_outcome                int unsigned                             null comment 'Number of user correlations for which this variable is the outcome variable',
-    number_of_user_correlations_as_predictor                 int unsigned                             null comment 'Number of user correlations for which this variable is the predictor variable',
+    number_of_user_relationships_as_outcome                int unsigned                             null comment 'Number of user relationships for which this variable is the outcome variable',
+    number_of_user_relationships_as_predictor                 int unsigned                             null comment 'Number of user relationships for which this variable is the predictor variable',
     combination_operation                                enum ('SUM', 'MEAN')                     null comment 'How to combine values of this variable (for instance, to see a summary of the values over a month) SUM or MEAN',
     informational_url                                    varchar(2000)                            null comment 'Wikipedia url',
     most_common_connector_id                             int unsigned                             null,
@@ -76,7 +76,7 @@ create table user_variables
     average_seconds_between_measurements                 int                                      null,
     median_seconds_between_measurements                  int                                      null,
     last_correlated_at                                   timestamp                                null,
-    number_of_measurements_with_tags_at_last_correlation int                                      null,
+    number_of_measurements_with_tags_at_last_relationship int                                      null,
     analysis_settings_modified_at                        timestamp                                null,
     newest_data_at                                       timestamp                                null,
     analysis_requested_at                                timestamp                                null,
@@ -91,7 +91,6 @@ create table user_variables
     earliest_tagged_measurement_start_at                 timestamp                                null,
     latest_non_tagged_measurement_start_at               timestamp                                null,
     earliest_non_tagged_measurement_start_at             timestamp                                null,
-    wp_post_id                                           bigint unsigned                          null,
     number_of_soft_deleted_measurements                  int                                      null comment 'Formula: update user_variables v
                 inner join (
                     select measurements.user_variable_id, count(measurements.id) as number_of_soft_deleted_measurements
@@ -101,7 +100,7 @@ create table user_variables
                     ) m on v.id = m.user_variable_id
                 set v.number_of_soft_deleted_measurements = m.number_of_soft_deleted_measurements
             ',
-    best_user_correlation_id                             int                                      null,
+    best_user_relationship_id                             int                                      null,
     number_of_measurements                               int unsigned                             null comment 'Number of Measurements for this User Variable.
                     [Formula: update user_variables
                         left join (
@@ -146,10 +145,10 @@ create table user_variables
         unique (user_id, global_variable_id),
     constraint user_variables_slug_uindex
         unique (slug),
-    constraint user_variables_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
-    constraint user_variables_correlations_qm_score_fk
-        foreign key (best_user_correlation_id) references user_study_results (id)
+    constraint user_variables_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
+    constraint user_variables_relationships_sinn_rank_fk
+        foreign key (best_user_relationship_id) references user_variable_relationships (id)
             on delete set null,
     constraint user_variables_default_unit_id_fk
         foreign key (default_unit_id) references units (id),

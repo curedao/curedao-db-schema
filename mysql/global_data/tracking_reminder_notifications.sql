@@ -9,14 +9,14 @@ create table tracking_reminder_notifications
     user_id              bigint unsigned                     not null,
     notified_at          timestamp                           null,
     received_at          timestamp                           null,
-    client_id            varchar(255)                        null,
+    oauth_client_id            varchar(255)                        null,
     global_variable_id          int unsigned                        not null,
     notify_at            timestamp                           not null,
     user_variable_id     int unsigned                        not null,
     constraint notify_at_tracking_reminder_id_uindex
         unique (notify_at, tracking_reminder_id),
-    constraint tracking_reminder_notifications_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+    constraint tracking_reminder_notifications_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint tracking_reminder_notifications_tracking_reminders_id_fk
         foreign key (tracking_reminder_id) references tracking_reminders (id)
             on update cascade on delete cascade,

@@ -16,7 +16,7 @@ create table api_connector_requests
     updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     deleted_at            timestamp                           null,
     content_type          varchar(100)                        null,
-    imported_data_from_at timestamp                           null comment 'Earliest data that we''ve requested from this data source ',
+    imported_data_from_at timestamp                           null comment 'Earliest data requested from this data source ',
     constraint connector_requests_connections_id_fk
         foreign key (connection_id) references api_connections (id),
     constraint connector_requests_connector_imports_id_fk

@@ -2,7 +2,7 @@ create table api_connector_imports
 (
     id                           int(11) unsigned auto_increment
         primary key,
-    client_id                    varchar(80)                                null,
+    oauth_client_id                    varchar(80)                                null,
     connection_id                int(11) unsigned                           null,
     connector_id                 int(11) unsigned                           not null,
     created_at                   timestamp        default CURRENT_TIMESTAMP not null,
@@ -39,8 +39,8 @@ create table api_connector_imports
         unique (connection_id, created_at),
     constraint connector_imports_connector_id_user_id_created_at_uindex
         unique (connector_id, user_id, created_at),
-    constraint connector_imports_client_id_fk
-        foreign key (client_id) references oauth_clients (id),
+    constraint connector_imports_oauth_client_id_fk
+        foreign key (oauth_client_id) references oauth_clients (id),
     constraint connector_imports_connections_id_fk
         foreign key (connection_id) references api_connections (id),
     constraint connector_imports_connectors_id_fk

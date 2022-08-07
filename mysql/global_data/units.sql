@@ -11,16 +11,16 @@ create table units
     updated_at                                       timestamp default CURRENT_TIMESTAMP              not null on update CURRENT_TIMESTAMP,
     deleted_at                                       timestamp                                        null,
     filling_type                                     enum ('zero', 'none', 'interpolation', 'value')  not null comment 'The filling type specifies how periods of missing data should be treated. ',
-    number_of_outcome_population_studies             int unsigned                                     null comment 'Number of Global Population Studies for this predictor Unit.
+    number_of_outcome_global_studies             int unsigned                                     null comment 'Number of Global Global Studies for this predictor Unit.
                 [Formula:
                     update units
                         left join (
                             select count(id) as total, predictor_unit_id
-                            from aggregate_correlations
+                            from global_variable_relationships
                             group by predictor_unit_id
                         )
                         as grouped on units.id = grouped.predictor_unit_id
-                    set units.number_of_outcome_population_studies = count(grouped.total)
+                    set units.number_of_outcome_global_studies = count(grouped.total)
                 ]
                 ',
     number_of_common_tags_where_tag_variable_unit    int unsigned                                     null comment 'Number of Common Tags for this Tag Variable Unit.
@@ -47,16 +47,16 @@ create table units
                     set units.number_of_common_tags_where_tagged_variable_unit = count(grouped.total)
                 ]
                 ',
-    number_of_outcome_case_studies                   int unsigned                                     null comment 'Number of Individual Case Studies for this predictor Unit.
+    number_of_outcome_user_studies                   int unsigned                                     null comment 'Number of Individual Case Studies for this predictor Unit.
                 [Formula:
                     update units
                         left join (
                             select count(id) as total, predictor_unit_id
-                            from correlations
+                            from relationships
                             group by predictor_unit_id
                         )
                         as grouped on units.id = grouped.predictor_unit_id
-                    set units.number_of_outcome_case_studies = count(grouped.total)
+                    set units.number_of_outcome_user_studies = count(grouped.total)
                 ]
                 ',
     number_of_measurements                           int unsigned                                     null comment 'Number of Measurements for this Unit.
@@ -95,8 +95,8 @@ create table units
                         )
                         as grouped on units.id = grouped.default_unit_id
                     set units.number_of_variables_where_default_unit = count(grouped.total)]',
-    advanced                                         tinyint(1)                                       not null comment 'Advanced units are rarely used and should generally be hidden or at the bottom of selector lists',
-    manual_tracking                                  tinyint(1)                                       not null comment 'Include manual tracking units in selector when manually recording a measurement. ',
+    is_uncommon                                         tinyint(1)                                       not null comment 'Advanced units are rarely used and should generally be hidden or at the bottom of selector lists',
+    is_manually_recorded                                  tinyint(1)                                       not null comment 'Include manual tracking units in selector when manually recording a measurement. ',
     filling_value                                    float                                            null comment 'The filling value is substituted used when data is missing if the filling type is set to value.',
     scale                                            enum ('nominal', 'interval', 'ratio', 'ordinal') not null comment '
 Ordinal is used to simply depict the order of variables and not the difference between each of the variables. Ordinal scales are generally used to depict non-mathematical ideas such as frequency, satisfaction, happiness, a degree of pain etc.
