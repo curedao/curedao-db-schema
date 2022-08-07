@@ -118,15 +118,15 @@ create table users
                         )
                         as grouped on users.id = grouped.user_id
                     set users.number_of_measurement_exports = count(grouped.total)]',
-    number_of_measurement_imports                            int unsigned                         null comment 'Number of Measurement Imports for this User.
+    number_of_measurement_file_imports                            int unsigned                         null comment 'Number of Measurement Imports for this User.
                     [Formula: update users
                         left join (
                             select count(id) as total, user_id
-                            from measurement_imports
+                            from measurement_file_imports
                             group by user_id
                         )
                         as grouped on users.id = grouped.user_id
-                    set users.number_of_measurement_imports = count(grouped.total)]',
+                    set users.number_of_measurement_file_imports = count(grouped.total)]',
     number_of_measurements                                   int unsigned                         null comment 'Number of Measurements for this User.
                     [Formula: update users
                         left join (

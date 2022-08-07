@@ -1,4 +1,4 @@
-create table measurement_imports
+create table  measurement_file_imports
 (
     id                     int unsigned auto_increment
         primary key,
@@ -16,9 +16,9 @@ create table measurement_imports
     reason_for_import      varchar(255)                          null,
     user_error_message     varchar(255)                          null,
     internal_error_message varchar(255)                          null,
-    constraint measurement_imports_oauth_client_id_fk
+    constraint measurement_file_imports_oauth_client_id_fk
         foreign key (oauth_client_id) references oauth_clients (id),
-    constraint measurement_imports_user_id_fk
+    constraint measurement_file_imports_user_id_fk
         foreign key (user_id) references users (id)
 )
     comment 'Spreadsheet import records.' charset = utf8;
