@@ -56,8 +56,8 @@ create table user_variables
     deleted_at                                           timestamp                                null,
     second_to_last_value                                 double                                   null,
     third_to_last_value                                  double                                   null,
-    number_of_user_relationships_as_outcome                int unsigned                             null comment 'Number of user relationships for which this variable is the outcome variable',
-    number_of_user_relationships_as_predictor                 int unsigned                             null comment 'Number of user relationships for which this variable is the predictor variable',
+    number_of_user_variable_relationships_as_outcome                int unsigned                             null comment 'Number of user relationships for which this variable is the outcome variable',
+    number_of_user_variable_relationships_as_predictor                 int unsigned                             null comment 'Number of user relationships for which this variable is the predictor variable',
     combination_operation                                enum ('SUM', 'MEAN')                     null comment 'How to combine values of this variable (for instance, to see a summary of the values over a month) SUM or MEAN',
     informational_url                                    varchar(2000)                            null comment 'Wikipedia url',
     most_common_connector_id                             int unsigned                             null,
@@ -100,7 +100,7 @@ create table user_variables
                     ) m on v.id = m.user_variable_id
                 set v.number_of_soft_deleted_measurements = m.number_of_soft_deleted_measurements
             ',
-    best_user_relationship_id                             int                                      null,
+    best_user_variable_relationship_id                             int                                      null,
     number_of_measurements                               int unsigned                             null comment 'Number of Measurements for this User Variable.
                     [Formula: update user_variables
                         left join (
@@ -148,7 +148,7 @@ create table user_variables
     constraint user_variables_oauth_client_id_fk
         foreign key (oauth_client_id) references oauth_clients (id),
     constraint user_variables_relationships_sinn_rank_fk
-        foreign key (best_user_relationship_id) references user_variable_relationships (id)
+        foreign key (best_user_variable_relationship_id) references user_variable_relationships (id)
             on delete set null,
     constraint user_variables_default_unit_id_fk
         foreign key (default_unit_id) references units (id),
