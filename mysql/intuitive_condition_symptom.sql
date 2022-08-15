@@ -13,9 +13,9 @@ create table intuitive_condition_symptom
     mild                  int                                 null,
     minimal               int                                 null,
     no_symptoms           int                                 null,
-    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at            timestamp                           null,
-    created_at            timestamp default CURRENT_TIMESTAMP not null,
+    created_at            timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     constraint ct_condition_symptom_condition_uindex
         unique (condition_global_variable_id, symptom_global_variable_id),
     constraint ct_condition_symptom_gv_id_uindex

@@ -5,8 +5,8 @@ create table user_meta
     user_id    bigint unsigned                     null comment 'ID of the related user.',
     meta_key   varchar(255)                        null comment 'An identifying key for the piece of data.',
     meta_value longtext                            null comment 'The actual piece of data.',
-    updated_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    created_at timestamp default CURRENT_TIMESTAMP not null,
+    updated_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
+    created_at timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     deleted_at timestamp                           null,
     oauth_client_id  varchar(255)                        null,
     constraint user_meta_users_id_fk

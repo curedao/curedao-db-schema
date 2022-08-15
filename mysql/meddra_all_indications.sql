@@ -10,8 +10,8 @@ create table meddra_all_indications
     compound_name                                varchar(255)                        null,
     compound_global_variable_id                         int(10)                             null,
     condition_global_variable_id                        int(10)                             null,
-    updated_at                                   timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    created_at                                   timestamp default CURRENT_TIMESTAMP not null,
+    updated_at                                   timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
+    created_at                                   timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     deleted_at                                   timestamp                           null,
     id                                           int unsigned auto_increment
         primary key

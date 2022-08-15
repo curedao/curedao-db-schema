@@ -11,8 +11,8 @@ create table global_study_usefulness_votes
                     relationship is useful in helping them improve an outcome of interest.
                     -1 corresponds to a down vote. 1 corresponds to an up vote. 0 corresponds to removal of a
                     previous vote.  null corresponds to never having voted before.',
-    created_at               timestamp default CURRENT_TIMESTAMP not null,
-    updated_at               timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at               timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at               timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at               timestamp                           null,
     oauth_client_id                varchar(80) charset utf8            null,
     is_public                tinyint(1)                          null,

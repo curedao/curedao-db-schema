@@ -22,7 +22,7 @@ create table user_variables
     last_original_unit_id                                smallint unsigned                        null comment 'ID of last original Unit',
     `last_value`                                         double                                   null comment 'Last Value',
     last_original_value                                  double unsigned                          null comment 'Last original value which is stored',
-    number_of_relationships                               int                                      null comment 'Number of relationships for this variable',
+    number_of_user_variable_relationships                               int                                      null comment 'Number of relationships for this variable',
     status                                               varchar(25)                              null,
     standard_deviation                                   double                                   null comment 'Standard deviation',
     variance                                             double                                   null comment 'Variance',

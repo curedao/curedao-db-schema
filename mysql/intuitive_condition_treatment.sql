@@ -13,8 +13,8 @@ create table intuitive_condition_treatment
     much_worse            int       default 0                 not null,
     popularity            int       default 0                 not null,
     average_outcome        int       default 0                 not null,
-    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    created_at            timestamp default CURRENT_TIMESTAMP not null,
+    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
+    created_at            timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     deleted_at            timestamp                           null,
     constraint treatment_id_condition_id_uindex
         unique (treatment_id, condition_id),

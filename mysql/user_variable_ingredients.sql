@@ -1,4 +1,4 @@
-create table user_variable_tags
+create table user_variable_ingredients
 (
     id                      int unsigned auto_increment
         primary key,
@@ -6,8 +6,8 @@ create table user_variable_tags
     tag_global_variable_id         int unsigned                        not null comment 'This is the id of the ingredient variable whose value is determined based on the value of the tagged variable.',
     conversion_factor       double                              not null comment 'Number by which we multiply the tagged variable value to obtain the tag variable value',
     user_id                 bigint unsigned                     not null,
-    created_at              timestamp default CURRENT_TIMESTAMP not null,
-    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at              timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     oauth_client_id               varchar(80)                         null,
     deleted_at              timestamp                           null,
     tagged_user_variable_id int unsigned                        null,
@@ -31,5 +31,5 @@ create table user_variable_tags
     charset = utf8;
 
 create index fk_conversionUnit
-    on user_variable_tags (tag_global_variable_id);
+    on user_variable_ingredients (tag_global_variable_id);
 

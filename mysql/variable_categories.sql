@@ -9,7 +9,7 @@ create table variable_categories
     duration_of_action                           int unsigned         default 86400              not null comment 'How long the outcome of a measurement in this variable lasts',
     onset_delay                                  int unsigned         default 0                  not null comment 'How long it takes for a measurement in this variable to take outcome',
     combination_operation                        enum ('SUM', 'MEAN') default 'SUM'              not null comment 'How to combine values of this variable (for instance, to see a summary of the values over a month) SUM or MEAN',
-    created_at                                   timestamp            default CURRENT_TIMESTAMP  not null,
+    created_at                                   timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     updated_at                                   timestamp            default CURRENT_TIMESTAMP  not null on update CURRENT_TIMESTAMP,
     image_url                                    tinytext                                        null comment 'Image URL',
     default_unit_id                              smallint unsigned    default 12                 null comment 'ID of the default unit for the category',

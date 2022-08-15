@@ -4,8 +4,8 @@ create table unit_conversions
     step_number tinyint unsigned                    not null comment 'step in the conversion process',
     operation   tinyint unsigned                    not null comment '0 is add and 1 is multiply',
     value       double                              not null comment 'number used in the operation',
-    created_at  timestamp default CURRENT_TIMESTAMP not null,
-    updated_at  timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at  timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at  timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at  timestamp                           null,
     id          int(10) auto_increment
         primary key,

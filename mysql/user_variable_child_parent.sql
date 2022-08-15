@@ -5,8 +5,8 @@ create table user_variable_child_parent
     child_user_variable_id  int unsigned                        not null comment 'This is the id of the user variable being tagged with an ingredient or something.',
     parent_user_variable_id int unsigned                        not null comment 'This is the id of the ingredient user variable whose value is determined based on the value of the tagged user variable.',
     oauth_client_id               varchar(80)                         null,
-    created_at              timestamp default CURRENT_TIMESTAMP not null,
-    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at              timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at              timestamp                           null,
     constraint UK_tag_tagged
         unique (child_user_variable_id, parent_user_variable_id),

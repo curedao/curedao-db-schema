@@ -7,15 +7,15 @@ create table intuitive_condition_cause
     condition_global_variable_id int unsigned                        not null,
     predictor_global_variable_id     int unsigned                        not null,
     votes_percent         int                                 not null,
-    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    created_at            timestamp default CURRENT_TIMESTAMP not null,
+    updated_at            timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
+    created_at            timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     deleted_at            timestamp                           null,
     constraint ct_condition_cause_predictor_id_condition_id_uindex
         unique (predictor_id, condition_id),
     constraint ct_condition_cause_predictor_uindex
         unique (predictor_global_variable_id, condition_global_variable_id),
     constraint ct_condition_cause_ct_predictors_predictor_fk
-        foreign key (predictor_id) references intuitive_predictors (id),
+        foreign key (predictor_id) references intuitive_causes (id),
     constraint ct_condition_cause_ct_conditions_id_condition_fk
         foreign key (condition_id) references intuitive_conditions (id),
     constraint ct_condition_cause_variables_id_condition_fk

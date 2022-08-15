@@ -7,8 +7,8 @@ create table intuitive_treatment_side_effect
     treatment_id            int                                 not null,
     side_effect_id          int                                 not null,
     votes_percent           int                                 not null,
-    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
-    created_at              timestamp default CURRENT_TIMESTAMP not null,
+    updated_at              timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
+    created_at              timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
     deleted_at              timestamp                           null,
     constraint treatment_id_side_effect_id_uindex
         unique (treatment_id, side_effect_id),

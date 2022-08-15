@@ -3,8 +3,8 @@ create table tracking_reminder_notifications
     id                   int unsigned auto_increment
         primary key,
     tracking_reminder_id int unsigned                        not null,
-    created_at           timestamp default CURRENT_TIMESTAMP not null,
-    updated_at           timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at           timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at           timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at           timestamp                           null,
     user_id              bigint unsigned                     not null,
     notified_at          timestamp                           null,

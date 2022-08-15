@@ -9,8 +9,8 @@ create table global_study_causality_votes
     user_id                  bigint unsigned                     not null,
     vote                     int                                 not null comment 'The opinion of the data owner on whether or not there is a plausible
                                 mechanism of action by which the predictor variable could influence the outcome variable.',
-    created_at               timestamp default CURRENT_TIMESTAMP not null,
-    updated_at               timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    created_at               timestamp            default CURRENT_TIMESTAMP  not null comment 'When the DB record was first created',
+    updated_at               timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'When the DB record was last updated.',
     deleted_at               timestamp                           null,
     oauth_client_id                varchar(80) charset utf8            null,
     is_public                tinyint(1)                          null,
